@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysActivityMonitorMapper">
+    
+    <resultMap type="SysActivityMonitor" id="SysActivityMonitorResult">
+        <result property="id"    column="id"    />
+        <result property="activityId"    column="activity_id"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="remindTime"    column="remind_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectSysActivityMonitorVo">
+        select id, activity_id, start_time, end_time, remind_time, remark, create_time from sys_activity_monitor
+    </sql>
+
+    <select id="selectSysActivityMonitorList" parameterType="SysActivityMonitor" resultMap="SysActivityMonitorResult">
+        <include refid="selectSysActivityMonitorVo"/>
+        <where>  
+            <if test="activityId != null "> and activity_id = #{activityId}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="remindTime != null "> and remind_time = #{remindTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysActivityMonitorById" parameterType="Long" resultMap="SysActivityMonitorResult">
+        <include refid="selectSysActivityMonitorVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSysActivityMonitor" parameterType="SysActivityMonitor" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_activity_monitor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="activityId != null">activity_id,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="remindTime != null">remind_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="activityId != null">#{activityId},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="remindTime != null">#{remindTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysActivityMonitor" parameterType="SysActivityMonitor">
+        update sys_activity_monitor
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="activityId != null">activity_id = #{activityId},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="remindTime != null">remind_time = #{remindTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysActivityMonitorById" parameterType="Long">
+        delete from sys_activity_monitor where id = #{id}
+    </delete>
+
+    <delete id="deleteSysActivityMonitorByIds" parameterType="String">
+        delete from sys_activity_monitor where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
