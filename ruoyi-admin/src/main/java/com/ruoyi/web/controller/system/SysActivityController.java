@@ -2,6 +2,9 @@ package com.ruoyi.web.controller.system;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +31,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @date 2026-03-19
  */
 @RestController
-@RequestMapping("/system/activity")
+@RequestMapping("/activity/activityInfo")
 public class SysActivityController extends BaseController
 {
     @Autowired
@@ -37,7 +40,7 @@ public class SysActivityController extends BaseController
     /**
      * 查询活动信息列表
      */
-    @PreAuthorize("@ss.hasPermi('system:activity:list')")
+    @PreAuthorize("@ss.hasPermi('activity:activity:list')")
     @GetMapping("/list")
     public TableDataInfo list(SysActivity sysActivity)
     {
@@ -49,7 +52,7 @@ public class SysActivityController extends BaseController
     /**
      * 导出活动信息列表
      */
-    @PreAuthorize("@ss.hasPermi('system:activity:export')")
+    @PreAuthorize("@ss.hasPermi('activity:activity:export')")
     @Log(title = "活动信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, SysActivity sysActivity)
@@ -62,7 +65,7 @@ public class SysActivityController extends BaseController
     /**
      * 获取活动信息详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:activity:query')")
+    @PreAuthorize("@ss.hasPermi('activity:activity:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -72,33 +75,50 @@ public class SysActivityController extends BaseController
     /**
      * 新增活动信息
      */
-    @PreAuthorize("@ss.hasPermi('system:activity:add')")
+    @PreAuthorize("@ss.hasPermi('activity:activity:add')")
     @Log(title = "活动信息", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SysActivity sysActivity)
     {
+        sysActivity.setCreateBy(SecurityUtils.getLoginUser().getUsername());
         return toAjax(sysActivityService.insertSysActivity(sysActivity));
     }
 
     /**
      * 修改活动信息
      */
-    @PreAuthorize("@ss.hasPermi('system:activity:edit')")
+    @PreAuthorize("@ss.hasPermi('activity:activity:edit')")
     @Log(title = "活动信息", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SysActivity sysActivity)
     {
+        sysActivity.setUpdateTime(DateUtils.getNowDate());
+        sysActivity.setUpdateBy(SecurityUtils.getLoginUser().getUsername());
         return toAjax(sysActivityService.updateSysActivity(sysActivity));
     }
 
     /**
      * 删除活动信息
      */
-    @PreAuthorize("@ss.hasPermi('system:activity:remove')")
+    @PreAuthorize("@ss.hasPermi('activity:activity:remove')")
     @Log(title = "活动信息", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sysActivityService.deleteSysActivityByIds(ids));
+    }
+
+    /**
+     * 修改活动信息
+     */
+    @PreAuthorize("@ss.hasPermi('activity:activity:edit')")
+    @Log(title = "活动信息", businessType = BusinessType.UPDATE)
+    @PostMapping("/start")
+    public AjaxResult startActivity(@RequestBody SysActivity sysActivity)
+    {
+        sysActivity.setUpdateTime(DateUtils.getNowDate());
+        sysActivity.setUpdateBy(SecurityUtils.getLoginUser().getUsername());
+        int row = sysActivityService.startSysActivity(sysActivity);
+        return toAjax(row);
     }
 }

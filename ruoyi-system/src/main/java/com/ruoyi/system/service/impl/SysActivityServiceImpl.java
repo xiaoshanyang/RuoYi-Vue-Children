@@ -2,6 +2,8 @@ package com.ruoyi.system.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.system.domain.SysActivityMonitor;
+import com.ruoyi.system.mapper.SysActivityMonitorMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.SysActivityMapper;
@@ -19,6 +21,9 @@ public class SysActivityServiceImpl implements ISysActivityService
 {
     @Autowired
     private SysActivityMapper sysActivityMapper;
+
+    @Autowired
+    private SysActivityMonitorMapper sysActivityMonitorMapper;
 
     /**
      * 查询活动信息
@@ -68,6 +73,20 @@ public class SysActivityServiceImpl implements ISysActivityService
     {
         sysActivity.setUpdateTime(DateUtils.getNowDate());
         return sysActivityMapper.updateSysActivity(sysActivity);
+    }
+
+    @Override
+    public int startSysActivity(SysActivity sysActivity){
+        sysActivity.setActivityStatus("监控中");
+        int row = sysActivityMapper.updateSysActivity(sysActivity);
+
+        SysActivityMonitor sysActivityMonitor = new SysActivityMonitor();
+        sysActivityMonitor.setCreateTime(DateUtils.getNowDate());
+        sysActivityMonitor.setActivityId(sysActivity.getId());
+        sysActivityMonitor.setStartTime(DateUtils.getNowDate());
+        sysActivityMonitor.setRemindTime(DateUtils.addMinutes(DateUtils.getNowDate(), sysActivity.getPresetDuration()));
+        // 新建activity monitor
+        return sysActivityMonitorMapper.insertSysActivityMonitor(sysActivityMonitor);
     }
 
     /**

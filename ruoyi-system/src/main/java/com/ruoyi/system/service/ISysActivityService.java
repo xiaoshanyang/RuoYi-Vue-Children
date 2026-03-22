@@ -44,6 +44,13 @@ public interface ISysActivityService
     public int updateSysActivity(SysActivity sysActivity);
 
     /**
+     * 开始活动
+     * @param sysActivity
+     * @return
+     */
+    public int startSysActivity(SysActivity sysActivity);
+
+    /**
      * 批量删除活动信息
      * 
      * @param ids 需要删除的活动信息主键集合

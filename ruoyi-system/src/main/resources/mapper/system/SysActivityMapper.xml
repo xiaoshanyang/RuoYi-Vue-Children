@@ -30,8 +30,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="activityType != null  and activityType != ''"> and activity_type = #{activityType}</if>
             <if test="className != null  and className != ''"> and class_name like concat('%', #{className}, '%')</if>
             <if test="activityPlace != null  and activityPlace != ''"> and activity_place = #{activityPlace}</if>
-            <if test="presetDuration != null "> and preset_duration = #{presetDuration}</if>
-            <if test="actualDuration != null "> and actual_duration = #{actualDuration}</if>
+            <if test="presetDuration != null and presetDuration > 0"> and preset_duration = #{presetDuration}</if>
+            <if test="actualDuration != null and actualDuration > 0"> and actual_duration = #{actualDuration}</if>
             <if test="activityStatus != null  and activityStatus != ''"> and activity_status = #{activityStatus}</if>
         </where>
     </select>

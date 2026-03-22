@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.SysPurchaseMapper">
     
-    <resultMap type="SysPurchase" id="SysPurchaseResult">
+    <resultMap type="com.ruoyi.system.domain.vo.SysPurchaseVo" id="SysPurchaseResult">
         <result property="id"    column="id"    />
         <result property="foodName"    column="food_name"    />
         <result property="specification"    column="specification"    />
@@ -21,25 +21,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSysPurchaseVo">
-        select id, food_name, specification, purchase_quantity, supplier_id, supplier_name, purchase_budget, purchase_status, remark, create_by, create_time, update_by, update_time from sys_purchase
+        select sp.id, sp.food_name, sp.specification, sp.purchase_quantity, sp.supplier_id, ss.supplier_name, sp.purchase_budget, sp.purchase_status, sp.remark, sp.create_by, sp.create_time, sp.update_by, sp.update_time
+        from sys_purchase sp
+        left join sys_supplier ss on ss.id = sp.supplier_id
     </sql>
 
     <select id="selectSysPurchaseList" parameterType="SysPurchase" resultMap="SysPurchaseResult">
         <include refid="selectSysPurchaseVo"/>
         <where>  
-            <if test="foodName != null  and foodName != ''"> and food_name like concat('%', #{foodName}, '%')</if>
-            <if test="specification != null  and specification != ''"> and specification = #{specification}</if>
-            <if test="purchaseQuantity != null "> and purchase_quantity = #{purchaseQuantity}</if>
-            <if test="supplierId != null "> and supplier_id = #{supplierId}</if>
-            <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
-            <if test="purchaseBudget != null "> and purchase_budget = #{purchaseBudget}</if>
-            <if test="purchaseStatus != null  and purchaseStatus != ''"> and purchase_status = #{purchaseStatus}</if>
+            <if test="foodName != null  and foodName != ''"> and sp.food_name like concat('%', #{foodName}, '%')</if>
+            <if test="specification != null  and specification != ''"> and sp.specification = #{specification}</if>
+            <if test="purchaseQuantity != null "> and sp.purchase_quantity = #{purchaseQuantity}</if>
+            <if test="supplierName != null  and supplierName != ''"> and ss.supplier_name like concat('%', #{supplierName}, '%')</if>
+            <if test="purchaseBudget != null "> and sp.purchase_budget = #{purchaseBudget}</if>
+            <if test="purchaseStatus != null  and purchaseStatus != ''"> and sp.purchase_status = #{purchaseStatus}</if>
         </where>
     </select>
     
     <select id="selectSysPurchaseById" parameterType="Long" resultMap="SysPurchaseResult">
         <include refid="selectSysPurchaseVo"/>
-        where id = #{id}
+        where sp.id = #{id}
     </select>
 
     <insert id="insertSysPurchase" parameterType="SysPurchase" useGeneratedKeys="true" keyProperty="id">
@@ -49,7 +50,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="specification != null">specification,</if>
             <if test="purchaseQuantity != null">purchase_quantity,</if>
             <if test="supplierId != null">supplier_id,</if>
-            <if test="supplierName != null">supplier_name,</if>
             <if test="purchaseBudget != null">purchase_budget,</if>
             <if test="purchaseStatus != null">purchase_status,</if>
             <if test="remark != null">remark,</if>
@@ -63,7 +63,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="specification != null">#{specification},</if>
             <if test="purchaseQuantity != null">#{purchaseQuantity},</if>
             <if test="supplierId != null">#{supplierId},</if>
-            <if test="supplierName != null">#{supplierName},</if>
             <if test="purchaseBudget != null">#{purchaseBudget},</if>
             <if test="purchaseStatus != null">#{purchaseStatus},</if>
             <if test="remark != null">#{remark},</if>
@@ -81,7 +80,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="specification != null">specification = #{specification},</if>
             <if test="purchaseQuantity != null">purchase_quantity = #{purchaseQuantity},</if>
             <if test="supplierId != null">supplier_id = #{supplierId},</if>
-            <if test="supplierName != null">supplier_name = #{supplierName},</if>
             <if test="purchaseBudget != null">purchase_budget = #{purchaseBudget},</if>
             <if test="purchaseStatus != null">purchase_status = #{purchaseStatus},</if>
             <if test="remark != null">remark = #{remark},</if>

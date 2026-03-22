@@ -28,7 +28,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @date 2026-03-19
  */
 @RestController
-@RequestMapping("/system/supplier")
+@RequestMapping("/purchase/supplier")
 public class SysSupplierController extends BaseController
 {
     @Autowired
@@ -37,7 +37,7 @@ public class SysSupplierController extends BaseController
     /**
      * 查询供应商信息列表
      */
-    @PreAuthorize("@ss.hasPermi('system:supplier:list')")
+    @PreAuthorize("@ss.hasPermi('purchase:supplier:list')")
     @GetMapping("/list")
     public TableDataInfo list(SysSupplier sysSupplier)
     {
@@ -49,7 +49,7 @@ public class SysSupplierController extends BaseController
     /**
      * 导出供应商信息列表
      */
-    @PreAuthorize("@ss.hasPermi('system:supplier:export')")
+    @PreAuthorize("@ss.hasPermi('purchase:supplier:export')")
     @Log(title = "供应商信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, SysSupplier sysSupplier)
@@ -62,7 +62,7 @@ public class SysSupplierController extends BaseController
     /**
      * 获取供应商信息详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:supplier:query')")
+    @PreAuthorize("@ss.hasPermi('purchase:supplier:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -72,7 +72,7 @@ public class SysSupplierController extends BaseController
     /**
      * 新增供应商信息
      */
-    @PreAuthorize("@ss.hasPermi('system:supplier:add')")
+    @PreAuthorize("@ss.hasPermi('purchase:supplier:add')")
     @Log(title = "供应商信息", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SysSupplier sysSupplier)
@@ -83,7 +83,7 @@ public class SysSupplierController extends BaseController
     /**
      * 修改供应商信息
      */
-    @PreAuthorize("@ss.hasPermi('system:supplier:edit')")
+    @PreAuthorize("@ss.hasPermi('purchase:supplier:edit')")
     @Log(title = "供应商信息", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SysSupplier sysSupplier)
@@ -94,7 +94,7 @@ public class SysSupplierController extends BaseController
     /**
      * 删除供应商信息
      */
-    @PreAuthorize("@ss.hasPermi('system:supplier:remove')")
+    @PreAuthorize("@ss.hasPermi('purchase:supplier:remove')")
     @Log(title = "供应商信息", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

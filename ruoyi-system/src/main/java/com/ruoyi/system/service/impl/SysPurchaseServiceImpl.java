@@ -2,6 +2,7 @@ package com.ruoyi.system.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.system.domain.vo.SysPurchaseVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.SysPurchaseMapper;
@@ -27,7 +28,7 @@ public class SysPurchaseServiceImpl implements ISysPurchaseService
      * @return 食材采购申请
      */
     @Override
-    public SysPurchase selectSysPurchaseById(Long id)
+    public SysPurchaseVo selectSysPurchaseById(Long id)
     {
         return sysPurchaseMapper.selectSysPurchaseById(id);
     }
@@ -39,7 +40,7 @@ public class SysPurchaseServiceImpl implements ISysPurchaseService
      * @return 食材采购申请
      */
     @Override
-    public List<SysPurchase> selectSysPurchaseList(SysPurchase sysPurchase)
+    public List<SysPurchaseVo> selectSysPurchaseList(SysPurchase sysPurchase)
     {
         return sysPurchaseMapper.selectSysPurchaseList(sysPurchase);
     }

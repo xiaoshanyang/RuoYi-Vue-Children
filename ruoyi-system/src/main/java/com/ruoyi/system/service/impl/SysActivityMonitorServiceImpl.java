@@ -2,6 +2,9 @@ package com.ruoyi.system.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.system.domain.SysActivity;
+import com.ruoyi.system.domain.vo.SysActivityMonitorVo;
+import com.ruoyi.system.mapper.SysActivityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.SysActivityMonitorMapper;
@@ -27,7 +30,7 @@ public class SysActivityMonitorServiceImpl implements ISysActivityMonitorService
      * @return 活动监控记录
      */
     @Override
-    public SysActivityMonitor selectSysActivityMonitorById(Long id)
+    public SysActivityMonitorVo selectSysActivityMonitorById(Long id)
     {
         return sysActivityMonitorMapper.selectSysActivityMonitorById(id);
     }
@@ -39,7 +42,7 @@ public class SysActivityMonitorServiceImpl implements ISysActivityMonitorService
      * @return 活动监控记录
      */
     @Override
-    public List<SysActivityMonitor> selectSysActivityMonitorList(SysActivityMonitor sysActivityMonitor)
+    public List<SysActivityMonitorVo> selectSysActivityMonitorList(SysActivityMonitor sysActivityMonitor)
     {
         return sysActivityMonitorMapper.selectSysActivityMonitorList(sysActivityMonitor);
     }

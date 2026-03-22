@@ -2,6 +2,8 @@ package com.ruoyi.web.controller.system;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.system.domain.vo.SysActivityMonitorVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +30,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @date 2026-03-19
  */
 @RestController
-@RequestMapping("/system/monitor")
+@RequestMapping("/activity/activityMonitor")
 public class SysActivityMonitorController extends BaseController
 {
     @Autowired
@@ -37,32 +39,32 @@ public class SysActivityMonitorController extends BaseController
     /**
      * 查询活动监控记录列表
      */
-    @PreAuthorize("@ss.hasPermi('system:monitor:list')")
+    @PreAuthorize("@ss.hasPermi('activity:monitor:list')")
     @GetMapping("/list")
     public TableDataInfo list(SysActivityMonitor sysActivityMonitor)
     {
         startPage();
-        List<SysActivityMonitor> list = sysActivityMonitorService.selectSysActivityMonitorList(sysActivityMonitor);
+        List<SysActivityMonitorVo> list = sysActivityMonitorService.selectSysActivityMonitorList(sysActivityMonitor);
         return getDataTable(list);
     }
 
     /**
      * 导出活动监控记录列表
      */
-    @PreAuthorize("@ss.hasPermi('system:monitor:export')")
+    @PreAuthorize("@ss.hasPermi('activity:monitor:export')")
     @Log(title = "活动监控记录", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, SysActivityMonitor sysActivityMonitor)
     {
-        List<SysActivityMonitor> list = sysActivityMonitorService.selectSysActivityMonitorList(sysActivityMonitor);
-        ExcelUtil<SysActivityMonitor> util = new ExcelUtil<SysActivityMonitor>(SysActivityMonitor.class);
+        List<SysActivityMonitorVo> list = sysActivityMonitorService.selectSysActivityMonitorList(sysActivityMonitor);
+        ExcelUtil<SysActivityMonitorVo> util = new ExcelUtil<SysActivityMonitorVo>(SysActivityMonitorVo.class);
         util.exportExcel(response, list, "活动监控记录数据");
     }
 
     /**
      * 获取活动监控记录详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:monitor:query')")
+    @PreAuthorize("@ss.hasPermi('activity:monitor:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -72,7 +74,7 @@ public class SysActivityMonitorController extends BaseController
     /**
      * 新增活动监控记录
      */
-    @PreAuthorize("@ss.hasPermi('system:monitor:add')")
+    @PreAuthorize("@ss.hasPermi('activity:monitor:add')")
     @Log(title = "活动监控记录", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SysActivityMonitor sysActivityMonitor)
@@ -83,7 +85,7 @@ public class SysActivityMonitorController extends BaseController
     /**
      * 修改活动监控记录
      */
-    @PreAuthorize("@ss.hasPermi('system:monitor:edit')")
+    @PreAuthorize("@ss.hasPermi('activity:monitor:edit')")
     @Log(title = "活动监控记录", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SysActivityMonitor sysActivityMonitor)
@@ -94,7 +96,7 @@ public class SysActivityMonitorController extends BaseController
     /**
      * 删除活动监控记录
      */
-    @PreAuthorize("@ss.hasPermi('system:monitor:remove')")
+    @PreAuthorize("@ss.hasPermi('activity:monitor:remove')")
     @Log(title = "活动监控记录", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

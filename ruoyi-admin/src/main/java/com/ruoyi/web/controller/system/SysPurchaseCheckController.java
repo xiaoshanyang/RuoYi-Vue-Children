@@ -28,7 +28,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @date 2026-03-19
  */
 @RestController
-@RequestMapping("/system/check")
+@RequestMapping("/purchase/check")
 public class SysPurchaseCheckController extends BaseController
 {
     @Autowired
@@ -37,7 +37,7 @@ public class SysPurchaseCheckController extends BaseController
     /**
      * 查询食材采购验收列表
      */
-    @PreAuthorize("@ss.hasPermi('system:check:list')")
+    @PreAuthorize("@ss.hasPermi('purchase:check:list')")
     @GetMapping("/list")
     public TableDataInfo list(SysPurchaseCheck sysPurchaseCheck)
     {
@@ -49,7 +49,7 @@ public class SysPurchaseCheckController extends BaseController
     /**
      * 导出食材采购验收列表
      */
-    @PreAuthorize("@ss.hasPermi('system:check:export')")
+    @PreAuthorize("@ss.hasPermi('purchase:check:export')")
     @Log(title = "食材采购验收", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, SysPurchaseCheck sysPurchaseCheck)
@@ -62,7 +62,7 @@ public class SysPurchaseCheckController extends BaseController
     /**
      * 获取食材采购验收详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:check:query')")
+    @PreAuthorize("@ss.hasPermi('purchase:check:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -72,7 +72,7 @@ public class SysPurchaseCheckController extends BaseController
     /**
      * 新增食材采购验收
      */
-    @PreAuthorize("@ss.hasPermi('system:check:add')")
+    @PreAuthorize("@ss.hasPermi('purchase:check:add')")
     @Log(title = "食材采购验收", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SysPurchaseCheck sysPurchaseCheck)
@@ -83,7 +83,7 @@ public class SysPurchaseCheckController extends BaseController
     /**
      * 修改食材采购验收
      */
-    @PreAuthorize("@ss.hasPermi('system:check:edit')")
+    @PreAuthorize("@ss.hasPermi('purchase:check:edit')")
     @Log(title = "食材采购验收", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SysPurchaseCheck sysPurchaseCheck)
@@ -94,7 +94,7 @@ public class SysPurchaseCheckController extends BaseController
     /**
      * 删除食材采购验收
      */
-    @PreAuthorize("@ss.hasPermi('system:check:remove')")
+    @PreAuthorize("@ss.hasPermi('purchase:check:remove')")
     @Log(title = "食材采购验收", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

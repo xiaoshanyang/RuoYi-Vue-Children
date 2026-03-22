@@ -2,6 +2,7 @@ package com.ruoyi.system.mapper;
 
 import java.util.List;
 import com.ruoyi.system.domain.SysPurchase;
+import com.ruoyi.system.domain.vo.SysPurchaseVo;
 
 /**
  * 食材采购申请Mapper接口
@@ -17,7 +18,7 @@ public interface SysPurchaseMapper
      * @param id 食材采购申请主键
      * @return 食材采购申请
      */
-    public SysPurchase selectSysPurchaseById(Long id);
+    public SysPurchaseVo selectSysPurchaseById(Long id);
 
     /**
      * 查询食材采购申请列表
@@ -25,7 +26,7 @@ public interface SysPurchaseMapper
      * @param sysPurchase 食材采购申请
      * @return 食材采购申请集合
      */
-    public List<SysPurchase> selectSysPurchaseList(SysPurchase sysPurchase);
+    public List<SysPurchaseVo> selectSysPurchaseList(SysPurchase sysPurchase);
 
     /**
      * 新增食材采购申请

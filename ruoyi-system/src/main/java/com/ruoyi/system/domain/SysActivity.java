@@ -36,11 +36,11 @@ public class SysActivity extends BaseEntity
 
     /** 预设时长(分钟) */
     @Excel(name = "预设时长(分钟)")
-    private Long presetDuration;
+    private int presetDuration;
 
     /** 实际时长(分钟) */
     @Excel(name = "实际时长(分钟)")
-    private Long actualDuration;
+    private int actualDuration;
 
     /** 活动状态：未开始/监控中/已完成/超时完成 */
     @Excel(name = "活动状态：未开始/监控中/已完成/超时完成")
@@ -96,22 +96,22 @@ public class SysActivity extends BaseEntity
         return activityPlace;
     }
 
-    public void setPresetDuration(Long presetDuration) 
+    public void setPresetDuration(int presetDuration)
     {
         this.presetDuration = presetDuration;
     }
 
-    public Long getPresetDuration() 
+    public int getPresetDuration()
     {
         return presetDuration;
     }
 
-    public void setActualDuration(Long actualDuration) 
+    public void setActualDuration(int actualDuration)
     {
         this.actualDuration = actualDuration;
     }
 
-    public Long getActualDuration() 
+    public int getActualDuration()
     {
         return actualDuration;
     }

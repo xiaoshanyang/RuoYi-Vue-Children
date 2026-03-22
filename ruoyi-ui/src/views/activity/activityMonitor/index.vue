@@ -47,7 +47,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:monitor:add']"
+          v-hasPermi="['activity:monitor:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -58,7 +58,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['system:monitor:edit']"
+          v-hasPermi="['activity:monitor:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -69,7 +69,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['system:monitor:remove']"
+          v-hasPermi="['activity:monitor:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -79,7 +79,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['system:monitor:export']"
+          v-hasPermi="['activity:monitor:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -88,20 +88,26 @@
     <el-table v-loading="loading" :data="monitorList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="主键ID" align="center" prop="id" />
-      <el-table-column label="活动ID" align="center" prop="activityId" />
+      <el-table-column label="活动名称" align="center" prop="activityName" />
+      <el-table-column label="预设时长(分钟)" align="center" prop="presetDuration" />
+      <el-table-column label="剩余时长(分钟)" align="center">
+        <template slot-scope="scope">
+          <span>{{ getTwoTimeMinuteDiff(scope.row.presetDuration, scope.row.endTime, scope.row.startTime) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="活动开始时间" align="center" prop="startTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.startTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.startTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="活动结束时间" align="center" prop="endTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="超时提醒时间" align="center" prop="remindTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.remindTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.remindTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="监控备注" align="center" prop="remark" />
@@ -112,14 +118,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:monitor:edit']"
+            v-hasPermi="['activity:monitor:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:monitor:remove']"
+            v-hasPermi="['activity:monitor:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -135,31 +141,32 @@
 
     <!-- 添加或修改活动监控记录对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="活动ID" prop="activityId">
-          <el-input v-model="form.activityId" placeholder="请输入活动ID" />
+          <el-input v-model="form.activityId" placeholder="请输入活动ID" disabled/>
         </el-form-item>
         <el-form-item label="活动开始时间" prop="startTime">
           <el-date-picker clearable
             v-model="form.startTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择活动开始时间">
+            type="datetime"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            placeholder="请选择活动开始时间"
+            disabled>
           </el-date-picker>
         </el-form-item>
         <el-form-item label="活动结束时间" prop="endTime">
           <el-date-picker clearable
             v-model="form.endTime"
-            type="date"
-            value-format="yyyy-MM-dd"
+            type="datetime"
+            value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="请选择活动结束时间">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="超时提醒时间" prop="remindTime">
           <el-date-picker clearable
             v-model="form.remindTime"
-            type="date"
-            value-format="yyyy-MM-dd"
+            type="datetime"
+            value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="请选择超时提醒时间">
           </el-date-picker>
         </el-form-item>
@@ -177,6 +184,7 @@
 
 <script>
 import { listMonitor, getMonitor, delMonitor, addMonitor, updateMonitor } from "@/api/system/monitor"
+import { parseTime } from '@/utils/ruoyi'
 
 export default {
   name: "Monitor",
@@ -317,6 +325,32 @@ export default {
       this.download('system/monitor/export', {
         ...this.queryParams
       }, `monitor_${new Date().getTime()}.xlsx`)
+    },
+    /**
+     * 计算两个时间字段的分钟差
+     * @param time1 时间1（如startTime）
+     * @param time2 时间2（如endTime）
+     * @returns 分钟差（取绝对值，确保为正）
+     */
+    getTwoTimeMinuteDiff(presetDuration, time1, time2) {
+      // 1. 空值处理
+      if (!time2) return "-";
+      
+      // 2. time1为空，兜底为当前时间
+      let actualTime1 = time1;
+      if (!actualTime1 || actualTime1 === "") {
+        actualTime1 = parseTime(new Date(), '{y}-{m}-{d} {h}:{i}:{s}');
+      }
+
+      // 2. 转时间戳
+      const stamp1 = new Date(actualTime1);
+      const stamp2 = new Date(time2);
+
+      // 3. 计算分钟差（取绝对值，避免负数）
+      const minuteDiff = presetDuration - Math.abs((stamp1 - stamp2) / 1000 / 60);
+      
+      // 4. 格式化
+      return minuteDiff.toFixed(0) + " 分钟"; // 取整
     }
   }
 }

@@ -2,6 +2,8 @@ package com.ruoyi.web.controller.system;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.system.domain.vo.SysPurchaseVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +30,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @date 2026-03-19
  */
 @RestController
-@RequestMapping("/system/purchase")
+@RequestMapping("/purchase/request")
 public class SysPurchaseController extends BaseController
 {
     @Autowired
@@ -37,32 +39,32 @@ public class SysPurchaseController extends BaseController
     /**
      * 查询食材采购申请列表
      */
-    @PreAuthorize("@ss.hasPermi('system:purchase:list')")
+    @PreAuthorize("@ss.hasPermi('purchase:request:list')")
     @GetMapping("/list")
     public TableDataInfo list(SysPurchase sysPurchase)
     {
         startPage();
-        List<SysPurchase> list = sysPurchaseService.selectSysPurchaseList(sysPurchase);
+        List<SysPurchaseVo> list = sysPurchaseService.selectSysPurchaseList(sysPurchase);
         return getDataTable(list);
     }
 
     /**
      * 导出食材采购申请列表
      */
-    @PreAuthorize("@ss.hasPermi('system:purchase:export')")
+    @PreAuthorize("@ss.hasPermi('purchase:request:export')")
     @Log(title = "食材采购申请", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, SysPurchase sysPurchase)
     {
-        List<SysPurchase> list = sysPurchaseService.selectSysPurchaseList(sysPurchase);
-        ExcelUtil<SysPurchase> util = new ExcelUtil<SysPurchase>(SysPurchase.class);
+        List<SysPurchaseVo> list = sysPurchaseService.selectSysPurchaseList(sysPurchase);
+        ExcelUtil<SysPurchaseVo> util = new ExcelUtil<SysPurchaseVo>(SysPurchaseVo.class);
         util.exportExcel(response, list, "食材采购申请数据");
     }
 
     /**
      * 获取食材采购申请详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:purchase:query')")
+    @PreAuthorize("@ss.hasPermi('purchase:request:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -72,7 +74,7 @@ public class SysPurchaseController extends BaseController
     /**
      * 新增食材采购申请
      */
-    @PreAuthorize("@ss.hasPermi('system:purchase:add')")
+    @PreAuthorize("@ss.hasPermi('purchase:request:add')")
     @Log(title = "食材采购申请", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SysPurchase sysPurchase)
@@ -83,7 +85,7 @@ public class SysPurchaseController extends BaseController
     /**
      * 修改食材采购申请
      */
-    @PreAuthorize("@ss.hasPermi('system:purchase:edit')")
+    @PreAuthorize("@ss.hasPermi('purchase:request:edit')")
     @Log(title = "食材采购申请", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SysPurchase sysPurchase)
@@ -94,7 +96,7 @@ public class SysPurchaseController extends BaseController
     /**
      * 删除食材采购申请
      */
-    @PreAuthorize("@ss.hasPermi('system:purchase:remove')")
+    @PreAuthorize("@ss.hasPermi('purchase:request:remove')")
     @Log(title = "食材采购申请", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

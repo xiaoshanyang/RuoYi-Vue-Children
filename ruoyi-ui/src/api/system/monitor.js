@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询活动监控记录列表
 export function listMonitor(query) {
   return request({
-    url: '/system/monitor/list',
+    url: '/activity/activityMonitor/list',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listMonitor(query) {
 // 查询活动监控记录详细
 export function getMonitor(id) {
   return request({
-    url: '/system/monitor/' + id,
+    url: '/activity/activityMonitor/' + id,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getMonitor(id) {
 // 新增活动监控记录
 export function addMonitor(data) {
   return request({
-    url: '/system/monitor',
+    url: '/activity/activityMonitor',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addMonitor(data) {
 // 修改活动监控记录
 export function updateMonitor(data) {
   return request({
-    url: '/system/monitor',
+    url: '/activity/activityMonitor',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updateMonitor(data) {
 // 删除活动监控记录
 export function delMonitor(id) {
   return request({
-    url: '/system/monitor/' + id,
+    url: '/activity/activityMonitor/' + id,
     method: 'delete'
   })
 }

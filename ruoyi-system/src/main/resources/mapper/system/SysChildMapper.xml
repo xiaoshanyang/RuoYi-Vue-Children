@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysChildMapper">
+    
+    <resultMap type="SysChild" id="SysChildResult">
+        <result property="id"    column="id"    />
+        <result property="childName"    column="child_name"    />
+        <result property="classId"    column="class_id"    />
+        <result property="gender"    column="gender"    />
+        <result property="birthday"    column="birthday"    />
+        <result property="allergyInfo"    column="allergy_info"    />
+        <result property="parentName"    column="parent_name"    />
+        <result property="parentPhone"    column="parent_phone"    />
+        <result property="enrollTime"    column="enroll_time"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSysChildVo">
+        select id, child_name, class_id, gender, birthday, allergy_info, parent_name, parent_phone, enroll_time, status, create_by, create_time, update_by, update_time from sys_child
+    </sql>
+
+    <select id="selectSysChildList" parameterType="SysChild" resultMap="SysChildResult">
+        <include refid="selectSysChildVo"/>
+        <where>  
+            <if test="childName != null  and childName != ''"> and child_name like concat('%', #{childName}, '%')</if>
+            <if test="classId != null "> and class_id = #{classId}</if>
+            <if test="gender != null  and gender != ''"> and gender = #{gender}</if>
+            <if test="birthday != null "> and birthday = #{birthday}</if>
+            <if test="allergyInfo != null  and allergyInfo != ''"> and allergy_info = #{allergyInfo}</if>
+            <if test="parentName != null  and parentName != ''"> and parent_name like concat('%', #{parentName}, '%')</if>
+            <if test="parentPhone != null  and parentPhone != ''"> and parent_phone = #{parentPhone}</if>
+            <if test="enrollTime != null "> and enroll_time = #{enrollTime}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysChildById" parameterType="Long" resultMap="SysChildResult">
+        <include refid="selectSysChildVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSysChild" parameterType="SysChild" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_child
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="childName != null and childName != ''">child_name,</if>
+            <if test="classId != null">class_id,</if>
+            <if test="gender != null">gender,</if>
+            <if test="birthday != null">birthday,</if>
+            <if test="allergyInfo != null">allergy_info,</if>
+            <if test="parentName != null">parent_name,</if>
+            <if test="parentPhone != null and parentPhone != ''">parent_phone,</if>
+            <if test="enrollTime != null">enroll_time,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="childName != null and childName != ''">#{childName},</if>
+            <if test="classId != null">#{classId},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="birthday != null">#{birthday},</if>
+            <if test="allergyInfo != null">#{allergyInfo},</if>
+            <if test="parentName != null">#{parentName},</if>
+            <if test="parentPhone != null and parentPhone != ''">#{parentPhone},</if>
+            <if test="enrollTime != null">#{enrollTime},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysChild" parameterType="SysChild">
+        update sys_child
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="childName != null and childName != ''">child_name = #{childName},</if>
+            <if test="classId != null">class_id = #{classId},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="birthday != null">birthday = #{birthday},</if>
+            <if test="allergyInfo != null">allergy_info = #{allergyInfo},</if>
+            <if test="parentName != null">parent_name = #{parentName},</if>
+            <if test="parentPhone != null and parentPhone != ''">parent_phone = #{parentPhone},</if>
+            <if test="enrollTime != null">enroll_time = #{enrollTime},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysChildById" parameterType="Long">
+        delete from sys_child where id = #{id}
+    </delete>
+
+    <delete id="deleteSysChildByIds" parameterType="String">
+        delete from sys_child where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

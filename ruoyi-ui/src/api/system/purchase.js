@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询食材采购申请列表
 export function listPurchase(query) {
   return request({
-    url: '/system/purchase/list',
+    url: '/purchase/request/list',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listPurchase(query) {
 // 查询食材采购申请详细
 export function getPurchase(id) {
   return request({
-    url: '/system/purchase/' + id,
+    url: '/purchase/request/' + id,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getPurchase(id) {
 // 新增食材采购申请
 export function addPurchase(data) {
   return request({
-    url: '/system/purchase',
+    url: '/purchase/request',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addPurchase(data) {
 // 修改食材采购申请
 export function updatePurchase(data) {
   return request({
-    url: '/system/purchase',
+    url: '/purchase/request',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updatePurchase(data) {
 // 删除食材采购申请
 export function delPurchase(id) {
   return request({
-    url: '/system/purchase/' + id,
+    url: '/purchase/request/' + id,
     method: 'delete'
   })
 }

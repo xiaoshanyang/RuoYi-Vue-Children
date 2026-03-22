@@ -2,6 +2,7 @@ package com.ruoyi.system.mapper;
 
 import java.util.List;
 import com.ruoyi.system.domain.SysActivityMonitor;
+import com.ruoyi.system.domain.vo.SysActivityMonitorVo;
 
 /**
  * 活动监控记录Mapper接口
@@ -17,7 +18,7 @@ public interface SysActivityMonitorMapper
      * @param id 活动监控记录主键
      * @return 活动监控记录
      */
-    public SysActivityMonitor selectSysActivityMonitorById(Long id);
+    public SysActivityMonitorVo selectSysActivityMonitorById(Long id);
 
     /**
      * 查询活动监控记录列表
@@ -25,7 +26,7 @@ public interface SysActivityMonitorMapper
      * @param sysActivityMonitor 活动监控记录
      * @return 活动监控记录集合
      */
-    public List<SysActivityMonitor> selectSysActivityMonitorList(SysActivityMonitor sysActivityMonitor);
+    public List<SysActivityMonitorVo> selectSysActivityMonitorList(SysActivityMonitor sysActivityMonitor);
 
     /**
      * 新增活动监控记录

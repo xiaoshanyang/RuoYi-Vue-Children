@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.SysActivityMonitorMapper">
     
-    <resultMap type="SysActivityMonitor" id="SysActivityMonitorResult">
+    <resultMap type="com.ruoyi.system.domain.vo.SysActivityMonitorVo" id="SysActivityMonitorResult">
         <result property="id"    column="id"    />
         <result property="activityId"    column="activity_id"    />
         <result property="startTime"    column="start_time"    />
@@ -12,25 +12,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="remindTime"    column="remind_time"    />
         <result property="remark"    column="remark"    />
         <result property="createTime"    column="create_time"    />
+
+        <result property="activityName"    column="activity_name"    />
+        <result property="activityType"    column="activity_type"    />
+        <result property="className"    column="class_name"    />
+        <result property="activityPlace"    column="activity_place"    />
+        <result property="presetDuration"    column="preset_duration"    />
+        <result property="actualDuration"    column="actual_duration"    />
+        <result property="activityStatus"    column="activity_status"    />
     </resultMap>
 
     <sql id="selectSysActivityMonitorVo">
-        select id, activity_id, start_time, end_time, remind_time, remark, create_time from sys_activity_monitor
+        select sam.id, sam.activity_id, sam.start_time, sam.end_time, sam.remind_time, sam.remark, sam.create_time, sa.activity_name, sa.activity_type, sa.class_name, sa.activity_place,
+               sa.preset_duration, sa.actual_duration, sa.activity_status
+        from sys_activity_monitor sam
+        left join sys_activity sa on sam.activity_id = sa.id
     </sql>
 
     <select id="selectSysActivityMonitorList" parameterType="SysActivityMonitor" resultMap="SysActivityMonitorResult">
         <include refid="selectSysActivityMonitorVo"/>
         <where>  
-            <if test="activityId != null "> and activity_id = #{activityId}</if>
-            <if test="startTime != null "> and start_time = #{startTime}</if>
-            <if test="endTime != null "> and end_time = #{endTime}</if>
-            <if test="remindTime != null "> and remind_time = #{remindTime}</if>
+            <if test="activityId != null "> and sam.activity_id = #{activityId}</if>
+            <if test="startTime != null "> and sam.start_time = #{startTime}</if>
+            <if test="endTime != null "> and sam.end_time = #{endTime}</if>
+            <if test="remindTime != null "> and sam.remind_time = #{remindTime}</if>
         </where>
     </select>
     
     <select id="selectSysActivityMonitorById" parameterType="Long" resultMap="SysActivityMonitorResult">
         <include refid="selectSysActivityMonitorVo"/>
-        where id = #{id}
+        where sam.id = #{id}
     </select>
 
     <insert id="insertSysActivityMonitor" parameterType="SysActivityMonitor" useGeneratedKeys="true" keyProperty="id">
