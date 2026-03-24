@@ -3,16 +3,16 @@ import request from '@/utils/request'
 // 查询供应商信息列表
 export function listSupplier(query) {
   return request({
-    url: '/purchase/supplier/list',
+    url: '/system/supplier/list',
     method: 'get',
     params: query
   })
 }
 
 // 查询供应商信息详细
-export function getSupplier(id) {
+export function getSupplier(supplierId) {
   return request({
-    url: '/purchase/supplier/' + id,
+    url: '/system/supplier/' + supplierId,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getSupplier(id) {
 // 新增供应商信息
 export function addSupplier(data) {
   return request({
-    url: '/purchase/supplier',
+    url: '/system/supplier',
     method: 'post',
     data: data
   })
@@ -29,16 +29,44 @@ export function addSupplier(data) {
 // 修改供应商信息
 export function updateSupplier(data) {
   return request({
-    url: '/purchase/supplier',
+    url: '/system/supplier',
     method: 'put',
     data: data
   })
 }
 
 // 删除供应商信息
-export function delSupplier(id) {
+export function delSupplier(supplierId) {
   return request({
-    url: '/purchase/supplier/' + id,
+    url: '/system/supplier/' + supplierId,
     method: 'delete'
+  })
+}
+
+
+// 申请停用供应商
+export function applyDisableSupplier(data) {
+  return request({
+    url: '/system/supplier/applyDisable',
+    method: 'put',
+    data: data
+  })
+}
+
+// 申请启用供应商
+export function applyEnableSupplier(data) {
+  return request({
+    url: '/system/supplier/applyEnable',
+    method: 'put',
+    data: data
+  })
+}
+
+// 审核供应商
+export function auditSupplier(data) {
+  return request({
+    url: '/system/supplier/audit',
+    method: 'put',
+    data: data
   })
 }

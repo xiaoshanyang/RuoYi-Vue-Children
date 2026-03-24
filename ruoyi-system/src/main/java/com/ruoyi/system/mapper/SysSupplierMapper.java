@@ -7,17 +7,17 @@ import com.ruoyi.system.domain.SysSupplier;
  * 供应商信息Mapper接口
  * 
  * @author ruoyi
- * @date 2026-03-19
+ * @date 2026-03-24
  */
 public interface SysSupplierMapper 
 {
     /**
      * 查询供应商信息
      * 
-     * @param id 供应商信息主键
+     * @param supplierId 供应商信息主键
      * @return 供应商信息
      */
-    public SysSupplier selectSysSupplierById(Long id);
+    public SysSupplier selectSysSupplierBySupplierId(Long supplierId);
 
     /**
      * 查询供应商信息列表
@@ -46,16 +46,16 @@ public interface SysSupplierMapper
     /**
      * 删除供应商信息
      * 
-     * @param id 供应商信息主键
+     * @param supplierId 供应商信息主键
      * @return 结果
      */
-    public int deleteSysSupplierById(Long id);
+    public int deleteSysSupplierBySupplierId(Long supplierId);
 
     /**
      * 批量删除供应商信息
      * 
-     * @param ids 需要删除的数据主键集合
+     * @param supplierIds 需要删除的数据主键集合
      * @return 结果
      */
-    public int deleteSysSupplierByIds(Long[] ids);
+    public int deleteSysSupplierBySupplierIds(Long[] supplierIds);
 }

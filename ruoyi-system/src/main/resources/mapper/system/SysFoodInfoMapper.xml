@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysFoodInfoMapper">
+    
+    <resultMap type="SysFoodInfo" id="SysFoodInfoResult">
+        <result property="foodId"    column="food_id"    />
+        <result property="foodName"    column="food_name"    />
+        <result property="foodCode"    column="food_code"    />
+        <result property="foodType"    column="food_type"    />
+        <result property="spec"    column="spec"    />
+        <result property="unit"    column="unit"    />
+        <result property="warningDays"    column="warning_days"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectSysFoodInfoVo">
+        select food_id, food_name, food_code, food_type, spec, unit, warning_days, status, create_by, create_time, update_by, update_time, remark from sys_food_info
+    </sql>
+
+    <select id="selectSysFoodInfoList" parameterType="SysFoodInfo" resultMap="SysFoodInfoResult">
+        <include refid="selectSysFoodInfoVo"/>
+        <where>  
+            <if test="foodName != null  and foodName != ''"> and food_name like concat('%', #{foodName}, '%')</if>
+            <if test="foodCode != null  and foodCode != ''"> and food_code = #{foodCode}</if>
+            <if test="foodType != null  and foodType != ''"> and food_type = #{foodType}</if>
+            <if test="spec != null  and spec != ''"> and spec = #{spec}</if>
+            <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
+            <if test="warningDays != null "> and warning_days = #{warningDays}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysFoodInfoByFoodId" parameterType="Long" resultMap="SysFoodInfoResult">
+        <include refid="selectSysFoodInfoVo"/>
+        where food_id = #{foodId}
+    </select>
+
+    <insert id="insertSysFoodInfo" parameterType="SysFoodInfo" useGeneratedKeys="true" keyProperty="foodId">
+        insert into sys_food_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="foodName != null and foodName != ''">food_name,</if>
+            <if test="foodCode != null">food_code,</if>
+            <if test="foodType != null and foodType != ''">food_type,</if>
+            <if test="spec != null">spec,</if>
+            <if test="unit != null and unit != ''">unit,</if>
+            <if test="warningDays != null">warning_days,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="foodName != null and foodName != ''">#{foodName},</if>
+            <if test="foodCode != null">#{foodCode},</if>
+            <if test="foodType != null and foodType != ''">#{foodType},</if>
+            <if test="spec != null">#{spec},</if>
+            <if test="unit != null and unit != ''">#{unit},</if>
+            <if test="warningDays != null">#{warningDays},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysFoodInfo" parameterType="SysFoodInfo">
+        update sys_food_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="foodName != null and foodName != ''">food_name = #{foodName},</if>
+            <if test="foodCode != null">food_code = #{foodCode},</if>
+            <if test="foodType != null and foodType != ''">food_type = #{foodType},</if>
+            <if test="spec != null">spec = #{spec},</if>
+            <if test="unit != null and unit != ''">unit = #{unit},</if>
+            <if test="warningDays != null">warning_days = #{warningDays},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where food_id = #{foodId}
+    </update>
+
+    <delete id="deleteSysFoodInfoByFoodId" parameterType="Long">
+        delete from sys_food_info where food_id = #{foodId}
+    </delete>
+
+    <delete id="deleteSysFoodInfoByFoodIds" parameterType="String">
+        delete from sys_food_info where food_id in 
+        <foreach item="foodId" collection="array" open="(" separator="," close=")">
+            #{foodId}
+        </foreach>
+    </delete>
+</mapper>
