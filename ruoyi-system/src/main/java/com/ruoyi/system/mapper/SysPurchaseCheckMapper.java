@@ -1,61 +1,25 @@
 package com.ruoyi.system.mapper;
 
-import java.util.List;
 import com.ruoyi.system.domain.SysPurchaseCheck;
-
+import com.ruoyi.system.domain.SysPurchaseCheckItem;
+import org.apache.ibatis.annotations.Mapper;
+import java.util.List;
 /**
- * 食材采购验收Mapper接口
+ * 食材采购审核Mapper接口
  * 
  * @author ruoyi
  * @date 2026-03-19
  */
-public interface SysPurchaseCheckMapper 
-{
-    /**
-     * 查询食材采购验收
-     * 
-     * @param id 食材采购验收主键
-     * @return 食材采购验收
-     */
-    public SysPurchaseCheck selectSysPurchaseCheckById(Long id);
+@Mapper
+public interface SysPurchaseCheckMapper {
+    List<SysPurchaseCheck> selectPurchaseCheckList(SysPurchaseCheck check);
+    SysPurchaseCheck selectPurchaseCheckById(Long checkId);
+    SysPurchaseCheck selectCheckByPurchaseId(Long purchaseId);
+    int insertPurchaseCheck(SysPurchaseCheck check);
+    int updatePurchaseCheck(SysPurchaseCheck check);
 
-    /**
-     * 查询食材采购验收列表
-     * 
-     * @param sysPurchaseCheck 食材采购验收
-     * @return 食材采购验收集合
-     */
-    public List<SysPurchaseCheck> selectSysPurchaseCheckList(SysPurchaseCheck sysPurchaseCheck);
-
-    /**
-     * 新增食材采购验收
-     * 
-     * @param sysPurchaseCheck 食材采购验收
-     * @return 结果
-     */
-    public int insertSysPurchaseCheck(SysPurchaseCheck sysPurchaseCheck);
-
-    /**
-     * 修改食材采购验收
-     * 
-     * @param sysPurchaseCheck 食材采购验收
-     * @return 结果
-     */
-    public int updateSysPurchaseCheck(SysPurchaseCheck sysPurchaseCheck);
-
-    /**
-     * 删除食材采购验收
-     * 
-     * @param id 食材采购验收主键
-     * @return 结果
-     */
-    public int deleteSysPurchaseCheckById(Long id);
-
-    /**
-     * 批量删除食材采购验收
-     * 
-     * @param ids 需要删除的数据主键集合
-     * @return 结果
-     */
-    public int deleteSysPurchaseCheckByIds(Long[] ids);
+    void insertPurchaseCheckItems(List<SysPurchaseCheckItem> list);
+    List<SysPurchaseCheckItem> selectItemsByCheckId(Long checkId);
+    void deletePurchaseCheckById(Long checkId);
+    void deleteItemsByCheckId(Long checkId);
 }

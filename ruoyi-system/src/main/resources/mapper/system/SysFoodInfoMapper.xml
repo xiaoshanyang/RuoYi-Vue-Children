@@ -11,7 +11,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="foodType"    column="food_type"    />
         <result property="spec"    column="spec"    />
         <result property="unit"    column="unit"    />
-        <result property="warningDays"    column="warning_days"    />
+        <result property="price"    column="price"    />
+        <result property="expireDays"    column="expire_days"    />
         <result property="status"    column="status"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
@@ -21,7 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSysFoodInfoVo">
-        select food_id, food_name, food_code, food_type, spec, unit, warning_days, status, create_by, create_time, update_by, update_time, remark from sys_food_info
+        select food_id, food_name, food_code, food_type, spec, unit, price, expire_days, status, create_by, create_time, update_by, update_time, remark from sys_food_info
     </sql>
 
     <select id="selectSysFoodInfoList" parameterType="SysFoodInfo" resultMap="SysFoodInfoResult">
@@ -32,7 +33,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="foodType != null  and foodType != ''"> and food_type = #{foodType}</if>
             <if test="spec != null  and spec != ''"> and spec = #{spec}</if>
             <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
-            <if test="warningDays != null "> and warning_days = #{warningDays}</if>
+            <if test="price != null  and price != ''"> and price = #{price}</if>
+            <if test="expireDays != null "> and expire_days = #{expireDays}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
         </where>
     </select>
@@ -50,7 +52,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="foodType != null and foodType != ''">food_type,</if>
             <if test="spec != null">spec,</if>
             <if test="unit != null and unit != ''">unit,</if>
-            <if test="warningDays != null">warning_days,</if>
+            <if test="price != null">price,</if>
+            <if test="expireDays != null">expire_days,</if>
             <if test="status != null">status,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
@@ -64,7 +67,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="foodType != null and foodType != ''">#{foodType},</if>
             <if test="spec != null">#{spec},</if>
             <if test="unit != null and unit != ''">#{unit},</if>
-            <if test="warningDays != null">#{warningDays},</if>
+            <if test="price != null">#{price},</if>
+            <if test="expireDays != null">#{expireDays},</if>
             <if test="status != null">#{status},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -82,7 +86,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="foodType != null and foodType != ''">food_type = #{foodType},</if>
             <if test="spec != null">spec = #{spec},</if>
             <if test="unit != null and unit != ''">unit = #{unit},</if>
-            <if test="warningDays != null">warning_days = #{warningDays},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="expireDays != null">expire_days = #{expireDays},</if>
             <if test="status != null">status = #{status},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>

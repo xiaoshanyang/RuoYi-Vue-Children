@@ -1,11 +1,18 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.ruoyi.system.mapper.SysPurchaseCheckMapper;
 import com.ruoyi.system.domain.SysPurchaseCheck;
+import com.ruoyi.system.domain.SysPurchaseCheckItem;
 import com.ruoyi.system.service.ISysPurchaseCheckService;
 
 /**
@@ -20,76 +27,59 @@ public class SysPurchaseCheckServiceImpl implements ISysPurchaseCheckService
     @Autowired
     private SysPurchaseCheckMapper sysPurchaseCheckMapper;
 
-    /**
-     * 查询食材采购验收
-     * 
-     * @param id 食材采购验收主键
-     * @return 食材采购验收
-     */
+    
     @Override
-    public SysPurchaseCheck selectSysPurchaseCheckById(Long id)
-    {
-        return sysPurchaseCheckMapper.selectSysPurchaseCheckById(id);
+    public List<SysPurchaseCheck> selectPurchaseCheckList(SysPurchaseCheck check) {
+        return sysPurchaseCheckMapper.selectPurchaseCheckList(check);
     }
 
-    /**
-     * 查询食材采购验收列表
-     * 
-     * @param sysPurchaseCheck 食材采购验收
-     * @return 食材采购验收
-     */
     @Override
-    public List<SysPurchaseCheck> selectSysPurchaseCheckList(SysPurchaseCheck sysPurchaseCheck)
-    {
-        return sysPurchaseCheckMapper.selectSysPurchaseCheckList(sysPurchaseCheck);
+    public SysPurchaseCheck selectPurchaseCheckById(Long checkId) {
+        SysPurchaseCheck check = sysPurchaseCheckMapper.selectPurchaseCheckById(checkId);
+        check.setItems(sysPurchaseCheckMapper.selectItemsByCheckId(checkId));
+        return check;
     }
 
-    /**
-     * 新增食材采购验收
-     * 
-     * @param sysPurchaseCheck 食材采购验收
-     * @return 结果
-     */
     @Override
-    public int insertSysPurchaseCheck(SysPurchaseCheck sysPurchaseCheck)
-    {
-        sysPurchaseCheck.setCreateTime(DateUtils.getNowDate());
-        return sysPurchaseCheckMapper.insertSysPurchaseCheck(sysPurchaseCheck);
+    @Transactional
+    public int insertPurchaseCheck(SysPurchaseCheck check) {
+
+      // 1. 校验该采购单是否已验收
+      SysPurchaseCheck existCheck = sysPurchaseCheckMapper.selectCheckByPurchaseId(check.getPurchaseId());
+      if (existCheck != null) {
+          if ("1".equals(existCheck.getCheckResult())) {
+              throw new ServiceException("该采购单已验收合格，不可重复验收！");
+          }
+          if ("2".equals(existCheck.getCheckResult())) {
+              // 不合格单：删除旧验收记录，允许重新验收
+              sysPurchaseCheckMapper.deleteItemsByCheckId(existCheck.getCheckId());
+              sysPurchaseCheckMapper.deletePurchaseCheckById(existCheck.getCheckId());
+          }
+      }
+
+        check.setCheckBy(SecurityUtils.getUsername());
+        check.setCheckTime(DateUtils.getNowDate());
+        int rows = sysPurchaseCheckMapper.insertPurchaseCheck(check);
+
+        List<SysPurchaseCheckItem> items = check.getItems();
+        if (items != null && !items.isEmpty()) {
+            for (SysPurchaseCheckItem item : items) {
+                item.setCheckId(check.getCheckId());
+                autoCalcItemResult(item);
+            }
+            sysPurchaseCheckMapper.insertPurchaseCheckItems(items);
+        }
+        return rows;
     }
 
-    /**
-     * 修改食材采购验收
-     * 
-     * @param sysPurchaseCheck 食材采购验收
-     * @return 结果
-     */
-    @Override
-    public int updateSysPurchaseCheck(SysPurchaseCheck sysPurchaseCheck)
-    {
-        return sysPurchaseCheckMapper.updateSysPurchaseCheck(sysPurchaseCheck);
-    }
-
-    /**
-     * 批量删除食材采购验收
-     * 
-     * @param ids 需要删除的食材采购验收主键
-     * @return 结果
-     */
-    @Override
-    public int deleteSysPurchaseCheckByIds(Long[] ids)
-    {
-        return sysPurchaseCheckMapper.deleteSysPurchaseCheckByIds(ids);
-    }
-
-    /**
-     * 删除食材采购验收信息
-     * 
-     * @param id 食材采购验收主键
-     * @return 结果
-     */
-    @Override
-    public int deleteSysPurchaseCheckById(Long id)
-    {
-        return sysPurchaseCheckMapper.deleteSysPurchaseCheckById(id);
+    // 自动计算明细结果：任意一项不合格则明细不合格
+    private void autoCalcItemResult(SysPurchaseCheckItem item) {
+        if ("0".equals(item.getExpireCheck())
+            || "0".equals(item.getPesticideCheck())
+            || "0".equals(item.getAppearanceCheck())) {
+            item.setItemResult("0");
+        } else {
+            item.setItemResult("1");
+        }
     }
 }

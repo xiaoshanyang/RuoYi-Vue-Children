@@ -27,7 +27,7 @@ public class SysFoodInfo extends BaseEntity
     private String foodCode;
 
     /** 食材类型（字典：food_type） */
-    @Excel(name = "食材类型", readConverterExp = "字=典：food_type")
+    @Excel(name = "食材类别", readConverterExp = "字=典：food_type")
     private String foodType;
 
     /** 规格（如：一级、无公害、有机） */
@@ -38,9 +38,13 @@ public class SysFoodInfo extends BaseEntity
     @Excel(name = "计量单位", readConverterExp = "斤=/公斤/箱/袋")
     private String unit;
 
-    /** 保质期预警天数 */
-    @Excel(name = "保质期预警天数")
-    private Long warningDays;
+    /** 价格 */
+    @Excel(name = "价格")
+    private String price;
+
+    /** 保质期(天) */
+    @Excel(name = "保质期(天)")
+    private Long expireDays;
 
     /** 状态（0正常 1停用） */
     @Excel(name = "状态", readConverterExp = "0=正常,1=停用")
@@ -106,14 +110,14 @@ public class SysFoodInfo extends BaseEntity
         return unit;
     }
 
-    public void setWarningDays(Long warningDays) 
+    public void setExpireDays(Long expireDays) 
     {
-        this.warningDays = warningDays;
+        this.expireDays = expireDays;
     }
 
-    public Long getWarningDays() 
+    public Long getExpireDays() 
     {
-        return warningDays;
+        return expireDays;
     }
 
     public void setStatus(String status) 
@@ -126,6 +130,14 @@ public class SysFoodInfo extends BaseEntity
         return status;
     }
 
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -135,7 +147,8 @@ public class SysFoodInfo extends BaseEntity
             .append("foodType", getFoodType())
             .append("spec", getSpec())
             .append("unit", getUnit())
-            .append("warningDays", getWarningDays())
+            .append("price", getPrice())
+            .append("expireDays", getExpireDays())
             .append("status", getStatus())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())

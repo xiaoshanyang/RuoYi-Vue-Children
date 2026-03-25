@@ -97,7 +97,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="supplierList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="supplierList" @selection-change="handleSelectionChange" border>
       <el-table-column type="selection" width="55" align="center" v-if="hasEditOrRemovePerm"/>
       <el-table-column label="序号" type="index" width="80"  align="center" :index="index => index + 1"/>
       <el-table-column label="供应商名称" align="center" prop="supplierName" />

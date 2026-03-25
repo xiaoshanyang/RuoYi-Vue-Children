@@ -2,7 +2,7 @@ package com.ruoyi.system.mapper;
 
 import java.util.List;
 import com.ruoyi.system.domain.SysPurchase;
-import com.ruoyi.system.domain.vo.SysPurchaseVo;
+import com.ruoyi.system.domain.SysPurchaseItem;
 
 /**
  * 食材采购申请Mapper接口
@@ -12,51 +12,14 @@ import com.ruoyi.system.domain.vo.SysPurchaseVo;
  */
 public interface SysPurchaseMapper 
 {
-    /**
-     * 查询食材采购申请
-     * 
-     * @param id 食材采购申请主键
-     * @return 食材采购申请
-     */
-    public SysPurchaseVo selectSysPurchaseById(Long id);
+   List<SysPurchase> selectPurchaseList(SysPurchase purchase);
+    SysPurchase selectPurchaseById(Long purchaseId);
+    int insertPurchase(SysPurchase purchase);
+    int updatePurchase(SysPurchase purchase);
+    int deletePurchaseByIds(Long[] ids);
 
-    /**
-     * 查询食材采购申请列表
-     * 
-     * @param sysPurchase 食材采购申请
-     * @return 食材采购申请集合
-     */
-    public List<SysPurchaseVo> selectSysPurchaseList(SysPurchase sysPurchase);
-
-    /**
-     * 新增食材采购申请
-     * 
-     * @param sysPurchase 食材采购申请
-     * @return 结果
-     */
-    public int insertSysPurchase(SysPurchase sysPurchase);
-
-    /**
-     * 修改食材采购申请
-     * 
-     * @param sysPurchase 食材采购申请
-     * @return 结果
-     */
-    public int updateSysPurchase(SysPurchase sysPurchase);
-
-    /**
-     * 删除食材采购申请
-     * 
-     * @param id 食材采购申请主键
-     * @return 结果
-     */
-    public int deleteSysPurchaseById(Long id);
-
-    /**
-     * 批量删除食材采购申请
-     * 
-     * @param ids 需要删除的数据主键集合
-     * @return 结果
-     */
-    public int deleteSysPurchaseByIds(Long[] ids);
+    // 明细
+    void insertPurchaseItems(List<SysPurchaseItem> list);
+    List<SysPurchaseItem> selectItemsByPurchaseId(Long purchaseId);
+    void deleteItemsByPurchaseId(Long purchaseId);
 }

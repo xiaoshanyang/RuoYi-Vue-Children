@@ -18,7 +18,6 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.system.domain.SysPurchaseCheck;
 import com.ruoyi.system.service.ISysPurchaseCheckService;
-import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
@@ -28,77 +27,30 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @date 2026-03-19
  */
 @RestController
-@RequestMapping("/purchase/check")
+@RequestMapping("/system/purchaseCheck")
 public class SysPurchaseCheckController extends BaseController
 {
     @Autowired
     private ISysPurchaseCheckService sysPurchaseCheckService;
 
-    /**
-     * 查询食材采购验收列表
-     */
-    @PreAuthorize("@ss.hasPermi('purchase:check:list')")
+    @PreAuthorize("@ss.hasPermi('system:purchaseCheck:list')")
     @GetMapping("/list")
-    public TableDataInfo list(SysPurchaseCheck sysPurchaseCheck)
-    {
+    public TableDataInfo list(SysPurchaseCheck check) {
         startPage();
-        List<SysPurchaseCheck> list = sysPurchaseCheckService.selectSysPurchaseCheckList(sysPurchaseCheck);
+        List<SysPurchaseCheck> list = sysPurchaseCheckService.selectPurchaseCheckList(check);
         return getDataTable(list);
     }
 
-    /**
-     * 导出食材采购验收列表
-     */
-    @PreAuthorize("@ss.hasPermi('purchase:check:export')")
-    @Log(title = "食材采购验收", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, SysPurchaseCheck sysPurchaseCheck)
-    {
-        List<SysPurchaseCheck> list = sysPurchaseCheckService.selectSysPurchaseCheckList(sysPurchaseCheck);
-        ExcelUtil<SysPurchaseCheck> util = new ExcelUtil<SysPurchaseCheck>(SysPurchaseCheck.class);
-        util.exportExcel(response, list, "食材采购验收数据");
+    @PreAuthorize("@ss.hasPermi('system:purchaseCheck:query')")
+    @GetMapping("/{checkId}")
+    public AjaxResult getInfo(@PathVariable Long checkId) {
+        return success(sysPurchaseCheckService.selectPurchaseCheckById(checkId));
     }
 
-    /**
-     * 获取食材采购验收详细信息
-     */
-    @PreAuthorize("@ss.hasPermi('purchase:check:query')")
-    @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
-        return success(sysPurchaseCheckService.selectSysPurchaseCheckById(id));
-    }
-
-    /**
-     * 新增食材采购验收
-     */
-    @PreAuthorize("@ss.hasPermi('purchase:check:add')")
-    @Log(title = "食材采购验收", businessType = BusinessType.INSERT)
+    @PreAuthorize("@ss.hasPermi('system:purchaseCheck:add')")
+    @Log(title = "采购验收", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody SysPurchaseCheck sysPurchaseCheck)
-    {
-        return toAjax(sysPurchaseCheckService.insertSysPurchaseCheck(sysPurchaseCheck));
-    }
-
-    /**
-     * 修改食材采购验收
-     */
-    @PreAuthorize("@ss.hasPermi('purchase:check:edit')")
-    @Log(title = "食材采购验收", businessType = BusinessType.UPDATE)
-    @PutMapping
-    public AjaxResult edit(@RequestBody SysPurchaseCheck sysPurchaseCheck)
-    {
-        return toAjax(sysPurchaseCheckService.updateSysPurchaseCheck(sysPurchaseCheck));
-    }
-
-    /**
-     * 删除食材采购验收
-     */
-    @PreAuthorize("@ss.hasPermi('purchase:check:remove')")
-    @Log(title = "食材采购验收", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
-        return toAjax(sysPurchaseCheckService.deleteSysPurchaseCheckByIds(ids));
+    public AjaxResult add(@RequestBody SysPurchaseCheck check) {
+        return toAjax(sysPurchaseCheckService.insertPurchaseCheck(check));
     }
 }

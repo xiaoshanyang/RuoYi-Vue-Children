@@ -4,82 +4,75 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.SysPurchaseCheckMapper">
     
-    <resultMap type="SysPurchaseCheck" id="SysPurchaseCheckResult">
-        <result property="id"    column="id"    />
-        <result property="purchaseId"    column="purchase_id"    />
-        <result property="checkStatus"    column="check_status"    />
-        <result property="checkResult"    column="check_result"    />
-        <result property="checkVoucher"    column="check_voucher"    />
-        <result property="createAbnormal"    column="create_abnormal"    />
-        <result property="checkBy"    column="check_by"    />
-        <result property="createTime"    column="create_time"    />
+    <resultMap type="SysPurchaseCheck" id="PurchaseCheckResult">
+        <result property="checkId" column="check_id"/>
+        <result property="purchaseId" column="purchase_id"/>
+        <result property="purchaseNo" column="purchase_no"/>
+        <result property="supplierId" column="supplier_id"/>
+        <result property="supplierName" column="supplier_name"/>
+        <result property="checkResult" column="check_result"/>
+        <result property="checkRemark" column="check_remark"/>
+        <result property="checkBy" column="check_by"/>
+        <result property="checkTime" column="check_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
     </resultMap>
 
-    <sql id="selectSysPurchaseCheckVo">
-        select id, purchase_id, check_status, check_result, check_voucher, create_abnormal, check_by, create_time from sys_purchase_check
-    </sql>
-
-    <select id="selectSysPurchaseCheckList" parameterType="SysPurchaseCheck" resultMap="SysPurchaseCheckResult">
-        <include refid="selectSysPurchaseCheckVo"/>
-        <where>  
-            <if test="purchaseId != null "> and purchase_id = #{purchaseId}</if>
-            <if test="checkStatus != null  and checkStatus != ''"> and check_status = #{checkStatus}</if>
-            <if test="checkResult != null  and checkResult != ''"> and check_result = #{checkResult}</if>
-            <if test="checkVoucher != null  and checkVoucher != ''"> and check_voucher = #{checkVoucher}</if>
-            <if test="createAbnormal != null  and createAbnormal != ''"> and create_abnormal = #{createAbnormal}</if>
-            <if test="checkBy != null  and checkBy != ''"> and check_by = #{checkBy}</if>
+    <select id="selectPurchaseCheckList" parameterType="PurchaseCheck" resultMap="PurchaseCheckResult">
+        select * from sys_purchase_check
+        <where>
+            <if test="purchaseNo != null">and purchase_no like concat('%',#{purchaseNo},'%')</if>
+            <if test="supplierName != null">and supplier_name like concat('%',#{supplierName},'%')</if>
+            <if test="checkResult != null">and check_result = #{checkResult}</if>
         </where>
-    </select>
-    
-    <select id="selectSysPurchaseCheckById" parameterType="Long" resultMap="SysPurchaseCheckResult">
-        <include refid="selectSysPurchaseCheckVo"/>
-        where id = #{id}
+        order by create_time desc
     </select>
 
-    <insert id="insertSysPurchaseCheck" parameterType="SysPurchaseCheck" useGeneratedKeys="true" keyProperty="id">
+    <select id="selectPurchaseCheckById" parameterType="Long" resultMap="PurchaseCheckResult">
+        select * from sys_purchase_check where check_id = #{checkId}
+    </select>
+
+    <insert id="insertPurchaseCheck" parameterType="PurchaseCheck">
         insert into sys_purchase_check
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="purchaseId != null">purchase_id,</if>
-            <if test="checkStatus != null">check_status,</if>
-            <if test="checkResult != null">check_result,</if>
-            <if test="checkVoucher != null">check_voucher,</if>
-            <if test="createAbnormal != null">create_abnormal,</if>
-            <if test="checkBy != null">check_by,</if>
-            <if test="createTime != null">create_time,</if>
-         </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="purchaseId != null">#{purchaseId},</if>
-            <if test="checkStatus != null">#{checkStatus},</if>
-            <if test="checkResult != null">#{checkResult},</if>
-            <if test="checkVoucher != null">#{checkVoucher},</if>
-            <if test="createAbnormal != null">#{createAbnormal},</if>
-            <if test="checkBy != null">#{checkBy},</if>
-            <if test="createTime != null">#{createTime},</if>
-         </trim>
+        (purchase_id, purchase_no, supplier_id, supplier_name, check_result, check_remark,
+         check_by, check_time, create_by, create_time, update_by, update_time)
+        values
+        (#{purchaseId}, #{purchaseNo}, #{supplierId}, #{supplierName}, #{checkResult}, #{checkRemark},
+         #{checkBy}, #{checkTime}, #{createBy}, #{createTime}, #{updateBy}, #{updateTime})
     </insert>
 
-    <update id="updateSysPurchaseCheck" parameterType="SysPurchaseCheck">
+    <update id="updatePurchaseCheck" parameterType="PurchaseCheck">
         update sys_purchase_check
-        <trim prefix="SET" suffixOverrides=",">
-            <if test="purchaseId != null">purchase_id = #{purchaseId},</if>
-            <if test="checkStatus != null">check_status = #{checkStatus},</if>
+        <set>
             <if test="checkResult != null">check_result = #{checkResult},</if>
-            <if test="checkVoucher != null">check_voucher = #{checkVoucher},</if>
-            <if test="createAbnormal != null">create_abnormal = #{createAbnormal},</if>
+            <if test="checkRemark != null">check_remark = #{checkRemark},</if>
             <if test="checkBy != null">check_by = #{checkBy},</if>
-            <if test="createTime != null">create_time = #{createTime},</if>
-        </trim>
-        where id = #{id}
+            <if test="checkTime != null">check_time = #{checkTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime}</if>
+        </set>
+        where check_id = #{checkId}
     </update>
 
-    <delete id="deleteSysPurchaseCheckById" parameterType="Long">
-        delete from sys_purchase_check where id = #{id}
-    </delete>
-
-    <delete id="deleteSysPurchaseCheckByIds" parameterType="String">
-        delete from sys_purchase_check where id in 
-        <foreach item="id" collection="array" open="(" separator="," close=")">
-            #{id}
+    <!-- 明细 -->
+    <insert id="insertPurchaseCheckItems">
+        insert into sys_purchase_check_item
+        (check_id, food_id, food_name, plan_qty, real_qty,
+         expire_check, pesticide_check, appearance_check, item_result)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{checkId}, #{item.foodId}, #{item.foodName}, #{item.planQty}, #{item.realQty},
+             #{item.expireCheck}, #{item.pesticideCheck}, #{item.appearanceCheck}, #{item.itemResult})
         </foreach>
+    </insert>
+
+    <select id="selectItemsByCheckId" parameterType="Long" resultType="PurchaseCheckItem">
+        select * from sys_purchase_check_item where check_id = #{checkId}
+    </select>
+
+    <delete id="deleteItemsByCheckId" parameterType="Long">
+        delete from sys_purchase_check_item where check_id = #{checkId}
     </delete>
 </mapper>

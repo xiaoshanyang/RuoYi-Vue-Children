@@ -1,45 +1,28 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="80px">
       <el-form-item label="食材名称" prop="foodName">
-        <el-input
-          v-model="queryParams.foodName"
-          placeholder="请输入食材名称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-input v-model="queryParams.foodName" placeholder="请输入食材名称" clearable />
       </el-form-item>
-      <el-form-item label="食材编码" prop="foodCode">
-        <el-input
-          v-model="queryParams.foodCode"
-          placeholder="请输入食材编码"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="食材类别" prop="foodType">
+         <el-select v-model="queryParams.foodType" placeholder="请选择类别" clearable>
+          <el-option
+            v-for="dict in dict.type.food_category"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item label="规格" prop="spec">
-        <el-input
-          v-model="queryParams.spec"
-          placeholder="请输入规格"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="计量单位" prop="unit">
-        <el-input
-          v-model="queryParams.unit"
-          placeholder="请输入计量单位"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="保质期预警天数" prop="warningDays">
-        <el-input
-          v-model="queryParams.warningDays"
-          placeholder="请输入保质期预警天数"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="状态" prop="status">
+        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
+          <el-option
+            v-for="dict in dict.type.food_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -55,30 +38,8 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:info:add']"
+          v-hasPermi="['system:foodInfo:add']"
         >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:info:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:info:remove']"
-        >删除</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -87,22 +48,32 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['system:info:export']"
+          v-hasPermi="['system:foodInfo:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="infoList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="食材ID" align="center" prop="foodId" />
+    <el-table v-loading="loading" :data="infoList" @selection-change="handleSelectionChange" border>
+      <el-table-column label="序号" type="index" width="60" align="center" :index="index => index + 1" />
       <el-table-column label="食材名称" align="center" prop="foodName" />
-      <el-table-column label="食材编码" align="center" prop="foodCode" />
-      <el-table-column label="食材类型" align="center" prop="foodType" />
-      <el-table-column label="规格" align="center" prop="spec" />
-      <el-table-column label="计量单位" align="center" prop="unit" />
-      <el-table-column label="保质期预警天数" align="center" prop="warningDays" />
-      <el-table-column label="状态" align="center" prop="status" />
+      <el-table-column label="食材类别" align="center" prop="foodType">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.food_category" :value="scope.row.foodType" />
+        </template>
+      </el-table-column>
+      <el-table-column label="计量单位" align="center" prop="unit">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.food_unit" :value="scope.row.unit" />
+        </template>
+      </el-table-column>
+      <el-table-column label="参考单价" align="center" prop="price" />
+      <el-table-column label="保质期(天)" align="center" prop="expireDays" />
+      <el-table-column label="状态" align="center" prop="status">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.food_status" :value="scope.row.status" />
+        </template>
+      </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -111,14 +82,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:info:edit']"
+            v-hasPermi="['system:foodInfo:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:info:remove']"
+            v-hasPermi="['system:foodInfo:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -132,31 +103,51 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改食材基础信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+    <!-- 新增/编辑弹窗 -->
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="食材名称" prop="foodName">
           <el-input v-model="form.foodName" placeholder="请输入食材名称" />
         </el-form-item>
-        <el-form-item label="食材编码" prop="foodCode">
-          <el-input v-model="form.foodCode" placeholder="请输入食材编码" />
-        </el-form-item>
-        <el-form-item label="规格" prop="spec">
-          <el-input v-model="form.spec" placeholder="请输入规格" />
+        <el-form-item label="食材类别" prop="foodType">
+          <el-select v-model="form.foodType" placeholder="请选择类别" clearable>
+            <el-option
+              v-for="dict in dict.type.food_category"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="计量单位" prop="unit">
-          <el-input v-model="form.unit" placeholder="请输入计量单位" />
+          <el-select v-model="form.unit" placeholder="请选择计量单位" clearable>
+            <el-option
+              v-for="dict in dict.type.food_unit"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
         </el-form-item>
-        <el-form-item label="保质期预警天数" prop="warningDays">
-          <el-input v-model="form.warningDays" placeholder="请输入保质期预警天数" />
+        <el-form-item label="参考单价" prop="price">
+          <el-input v-model="form.price" placeholder="请输入参考单价" />
+        </el-form-item>
+        <el-form-item label="保质期(天)" prop="expireDays">
+          <el-input v-model="form.expireDays" placeholder="请输入保质期天数" />
+        </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-radio-group v-model="form.status">
+            <el-radio label="0">正常</el-radio>
+            <el-radio label="1">禁用</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+          <el-input type="textarea" v-model="form.remark" rows="3" placeholder="备注信息" />
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+      <div slot="footer">
+        <el-button @click="open = false">取消</el-button>
+        <el-button type="primary" @click="submitForm">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -167,6 +158,7 @@ import { listFoodInfo, getFoodInfo, delFoodInfo, addFoodInfo, updateFoodInfo } f
 
 export default {
   name: "Info",
+  dicts: ['food_category', 'food_unit', 'food_status'],
   data() {
     return {
       // 遮罩层
@@ -196,7 +188,7 @@ export default {
         foodType: null,
         spec: null,
         unit: null,
-        warningDays: null,
+        expireDays: null,
         status: null,
       },
       // 表单参数
@@ -242,7 +234,7 @@ export default {
         foodType: null,
         spec: null,
         unit: null,
-        warningDays: null,
+        expireDays: null,
         status: null,
         createBy: null,
         createTime: null,

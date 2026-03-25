@@ -6,7 +6,8 @@ CREATE TABLE `sys_food_info` (
   `food_type` varchar(20) NOT NULL COMMENT '食材类型（字典：food_type）',
   `spec` varchar(100) DEFAULT NULL COMMENT '规格（如：一级、无公害、有机）',
   `unit` varchar(20) NOT NULL COMMENT '计量单位（斤/公斤/箱/袋）',
-  `warning_days` int(11) DEFAULT 0 COMMENT '保质期预警天数',
+  `price` decimal(10,2) DEFAULT 0 COMMENT '价格',
+  `expire_days` int(11) DEFAULT 0 COMMENT '保质期(天)',
   `status` char(1) DEFAULT '0' COMMENT '状态（0正常 1停用）',
   `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -49,39 +50,67 @@ CREATE TABLE `sys_supplier` (
   PRIMARY KEY (`supplier_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='供应商信息表';
 
+-- 采购单主表
+CREATE TABLE sys_purchase (
+    purchase_id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '采购单ID',
+    purchase_no VARCHAR(32) NOT NULL COMMENT '采购单号',
+    supplier_id BIGINT NOT NULL COMMENT '供应商ID',
+    supplier_name VARCHAR(100) COMMENT '供应商名称',
+    total_amount DECIMAL(10,2) COMMENT '总金额',
+    status CHAR(1) DEFAULT '0' COMMENT '状态 0待提交 1待审核 2通过 3驳回',
+    remark VARCHAR(500) COMMENT '备注',
+    audit_by VARCHAR(64) COMMENT '审核人',
+    audit_time DATETIME COMMENT '审核时间',
+    create_by VARCHAR(64) COMMENT '创建人',
+    create_time DATETIME COMMENT '创建时间',
+    update_by VARCHAR(64) COMMENT '更新人',
+    update_time DATETIME COMMENT '更新时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='采购单主表';
 
--- 采购申请表
-CREATE TABLE IF NOT EXISTS sys_purchase (
-  id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  food_name VARCHAR(50) NOT NULL COMMENT '食材名称',
-  specification VARCHAR(50) COMMENT '食材规格',
-  purchase_quantity INT NOT NULL COMMENT '采购数量',
-  supplier_id BIGINT NOT NULL COMMENT '供应商ID',
-  supplier_name VARCHAR(50) COMMENT '供应商名称',
-  purchase_budget DECIMAL(10,2) COMMENT '采购预算(元)',
-  purchase_status VARCHAR(20) DEFAULT '待审核' COMMENT '采购状态：待审核/审核失败/已审核/验收合格/验收不合格',
-  remark VARCHAR(500) COMMENT '采购备注',
-  create_by VARCHAR(64) DEFAULT '' COMMENT '创建者',
-  create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  update_by VARCHAR(64) DEFAULT '' COMMENT '更新者',
-  update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='食材采购申请表';
+-- 采购单明细表
+CREATE TABLE sys_purchase_item (
+    item_id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '明细ID',
+    purchase_id BIGINT NOT NULL COMMENT '采购单ID',
+    food_id BIGINT NOT NULL COMMENT '食材ID',
+    food_name VARCHAR(100) COMMENT '食材名称',
+    category VARCHAR(32) COMMENT '食材类别',
+    unit VARCHAR(32) COMMENT '计量单位',
+    price DECIMAL(10,2) COMMENT '单价',
+    qty DECIMAL(10,2) COMMENT '数量',
+    sub_total DECIMAL(10,2) COMMENT '小计金额'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='采购单明细表';
 
 
--- 采购验收表
-CREATE TABLE IF NOT EXISTS sys_purchase_check (
-  id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  purchase_id BIGINT NOT NULL COMMENT '采购ID',
-  check_status VARCHAR(10) COMMENT '验收状态：合格/不合格',
-  check_result VARCHAR(500) COMMENT '验收结果',
-  check_voucher VARCHAR(255) COMMENT '验收凭证路径',
-  create_abnormal CHAR(1) DEFAULT '0' COMMENT '是否创建异常：0否 1是',
-  check_by VARCHAR(64) DEFAULT '' COMMENT '验收人',
-  create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '验收时间',
-  PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='食材采购验收表';
+-- 采购验收主表
+CREATE TABLE sys_purchase_check (
+    check_id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '验收ID',
+    purchase_id BIGINT NOT NULL COMMENT '采购单ID',
+    purchase_no VARCHAR(32) COMMENT '采购单号',
+    supplier_id BIGINT COMMENT '供应商ID',
+    supplier_name VARCHAR(100) COMMENT '供应商名称',
+    check_result CHAR(1) DEFAULT '0' COMMENT '验收结果 0=待验收 1=合格 2=不合格',
+    check_remark VARCHAR(500) COMMENT '验收意见',
+    check_by VARCHAR(64) COMMENT '验收人',
+    check_time DATETIME COMMENT '验收时间',
+    create_by VARCHAR(64) COMMENT '创建人',
+    create_time DATETIME COMMENT '创建时间',
+    update_by VARCHAR(64) COMMENT '更新人',
+    update_time DATETIME COMMENT '更新时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='采购验收主表';
 
+-- 采购验收明细表
+CREATE TABLE sys_purchase_check_item (
+    item_id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '明细ID',
+    check_id BIGINT NOT NULL COMMENT '验收ID',
+    food_id BIGINT NOT NULL COMMENT '食材ID',
+    food_name VARCHAR(100) COMMENT '食材名称',
+    plan_qty DECIMAL(10,2) COMMENT '采购数量',
+    real_qty DECIMAL(10,2) COMMENT '实收数量',
+    expire_check CHAR(1) DEFAULT '1' COMMENT '保质期 0不合格 1合格',
+    pesticide_check CHAR(1) DEFAULT '1' COMMENT '农残 0不合格 1合格',
+    appearance_check CHAR(1) DEFAULT '1' COMMENT '外观 0不合格 1合格',
+    item_result CHAR(1) DEFAULT '1' COMMENT '明细结果 0不合格 1合格'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='采购验收明细表';
 
 
 INSERT INTO `ry-vue`.`sys_menu` (`menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `route_name`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) 
@@ -134,3 +163,49 @@ values('供应商信息删除', @parentId, '4',  '#', '', 1, 0, 'F', '0', '0', '
 
 insert into sys_menu (menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
 values('供应商信息导出', @parentId, '5',  '#', '', 1, 0, 'F', '0', '0', 'system:supplier:export',       '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('供应商信息审核', @parentId, '6',  '#', '', 1, 0, 'F', '0', '0', 'system:supplier:audit',       '#', 'admin', sysdate(), '', null, '');
+
+-- 菜单 SQL
+insert into sys_menu (menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('采购单管理', '3', '1', 'purchase', 'system/foodSafety/purchase/index', 1, 0, 'C', '0', '0', 'system:purchase:list', '#', 'admin', sysdate(), '', null, '采购单管理菜单');
+
+-- 按钮父菜单ID
+SELECT @parentId := LAST_INSERT_ID();
+
+-- 按钮 SQL
+insert into sys_menu (menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('采购单管理查询', @parentId, '1',  '#', '', 1, 0, 'F', '0', '0', 'system:purchase:query',        '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('采购单管理新增', @parentId, '2',  '#', '', 1, 0, 'F', '0', '0', 'system:purchase:add',          '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('采购单管理修改', @parentId, '3',  '#', '', 1, 0, 'F', '0', '0', 'system:purchase:edit',         '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('采购单管理删除', @parentId, '4',  '#', '', 1, 0, 'F', '0', '0', 'system:purchase:remove',       '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('采购单管理导出', @parentId, '5',  '#', '', 1, 0, 'F', '0', '0', 'system:purchase:export',       '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('采购单管理审核', @parentId, '6',  '#', '', 1, 0, 'F', '0', '0', 'system:purchase:audit',       '#', 'admin', sysdate(), '', null, '');
+
+-- 采购验收管理菜单
+insert into sys_menu (menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('采购验收管理', '3', '1', 'purchaseCheck', 'system/foodSafety/purchaseCheck/index', 1, 0, 'C', '0', '0', 'system:purchaseCheck:list', '#', 'admin', sysdate(), '', null, '采购验收管理菜单');
+
+-- 按钮父菜单ID
+SELECT @parentId := LAST_INSERT_ID();
+
+-- 按钮 SQL
+insert into sys_menu (menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('采购验收查询', @parentId, '1',  '#', '', 1, 0, 'F', '0', '0', 'system:purchaseCheck:query',        '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('采购验收新增', @parentId, '2',  '#', '', 1, 0, 'F', '0', '0', 'system:purchaseCheck:add',          '#', 'admin', sysdate(), '', null, '');
+
+insert into sys_menu (menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+values('采购验收修改', @parentId, '3',  '#', '', 1, 0, 'F', '0', '0', 'system:purchaseCheck:edit',         '#', 'admin', sysdate(), '', null, ''); 
