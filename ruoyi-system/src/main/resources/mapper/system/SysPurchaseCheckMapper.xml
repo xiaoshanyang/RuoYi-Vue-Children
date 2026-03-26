@@ -20,7 +20,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime" column="update_time"/>
     </resultMap>
 
-    <select id="selectPurchaseCheckList" parameterType="PurchaseCheck" resultMap="PurchaseCheckResult">
+    <resultMap id="PurchaseCheckItemResult" type="com.ruoyi.system.domain.SysPurchaseCheckItem">
+        <result property="itemId" column="item_id"/>
+        <result property="checkId" column="purchase_id"/>
+        <result property="foodId" column="food_id"/>
+        <result property="foodName" column="food_name"/>
+        <result property="planQty" column="plan_qty"/>
+        <result property="realQty" column="real_qty"/>
+        <result property="price" column="price"/>
+        <result property="expireCheck" column="expire_check"/>
+        <result property="pesticideCheck" column="pesticide_check"/>
+        <result property="appearanceCheck" column="appearance_check"/>
+        <result property="itemResult" column="item_result"/>
+    </resultMap>
+
+    <select id="selectPurchaseCheckList" parameterType="SysPurchaseCheck" resultMap="PurchaseCheckResult">
         select * from sys_purchase_check
         <where>
             <if test="purchaseNo != null">and purchase_no like concat('%',#{purchaseNo},'%')</if>
@@ -34,7 +48,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select * from sys_purchase_check where check_id = #{checkId}
     </select>
 
-    <insert id="insertPurchaseCheck" parameterType="PurchaseCheck">
+    <select id="selectCheckByPurchaseId" parameterType="Long" resultMap="PurchaseCheckResult">
+        select * from sys_purchase_check where purchase_id = #{purchaseId}
+    </select>
+
+    <insert id="insertPurchaseCheck" parameterType="SysPurchaseCheck" useGeneratedKeys="true" keyProperty="checkId" keyColumn="check_id">
         insert into sys_purchase_check
         (purchase_id, purchase_no, supplier_id, supplier_name, check_result, check_remark,
          check_by, check_time, create_by, create_time, update_by, update_time)
@@ -43,7 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          #{checkBy}, #{checkTime}, #{createBy}, #{createTime}, #{updateBy}, #{updateTime})
     </insert>
 
-    <update id="updatePurchaseCheck" parameterType="PurchaseCheck">
+    <update id="updatePurchaseCheck" parameterType="SysPurchaseCheck">
         update sys_purchase_check
         <set>
             <if test="checkResult != null">check_result = #{checkResult},</if>
@@ -63,16 +81,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          expire_check, pesticide_check, appearance_check, item_result)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{checkId}, #{item.foodId}, #{item.foodName}, #{item.planQty}, #{item.realQty},
+            (#{item.checkId}, #{item.foodId}, #{item.foodName}, #{item.planQty}, #{item.realQty},
              #{item.expireCheck}, #{item.pesticideCheck}, #{item.appearanceCheck}, #{item.itemResult})
         </foreach>
     </insert>
 
-    <select id="selectItemsByCheckId" parameterType="Long" resultType="PurchaseCheckItem">
+    <select id="selectItemsByCheckId" parameterType="Long" resultMap="PurchaseCheckItemResult">
         select * from sys_purchase_check_item where check_id = #{checkId}
     </select>
 
     <delete id="deleteItemsByCheckId" parameterType="Long">
         delete from sys_purchase_check_item where check_id = #{checkId}
+    </delete>
+
+    <delete id="deletePurchaseCheckById" parameterType="Long">
+        delete from sys_purchase_check where check_id = #{checkId}
     </delete>
 </mapper>

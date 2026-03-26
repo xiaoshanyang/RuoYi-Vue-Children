@@ -55,10 +55,13 @@
           <span>{{ parseTime(scope.row.checkTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="120">
+      <el-table-column label="操作" align="center">
         <template slot-scope="scope">
           <el-button size="mini" text icon="el-icon-view" @click="handleView(scope.row)">
             查看
+          </el-button>
+          <el-button size="mini" text icon="el-icon-check" @click="handleCheck(scope.row)" v-hasPermi="['system:purchaseCheck:add']" v-if="scope.row.checkResult !== '1'">
+            验收
           </el-button>
         </template>
       </el-table-column>
@@ -367,6 +370,17 @@ export default {
       this.viewForm = res.data
       this.viewItems = res.data.items || []
       this.viewOpen = true
+    },
+
+    // 继续验收
+    async handleCheck(row){
+      const res = await getPurchaseCheck(row.checkId)
+
+      this.open = true
+
+      // 构造主单
+      this.form = res.data
+      this.items = res.data.items
     }
   }
 }

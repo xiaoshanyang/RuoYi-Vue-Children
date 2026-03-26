@@ -21,6 +21,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime" column="update_time"/>
     </resultMap>
 
+    <resultMap id="PurchaseItemResult" type="com.ruoyi.system.domain.SysPurchaseItem">
+        <result property="itemId" column="item_id"/>
+        <result property="purchaseId" column="purchase_id"/>
+        <result property="foodId" column="food_id"/>
+        <result property="foodName" column="food_name"/>
+        <result property="foodType" column="food_type"/>
+        <result property="unit" column="unit"/>
+        <result property="price" column="price"/>
+        <result property="qty" column="qty"/>
+        <result property="subTotal" column="sub_total"/>
+    </resultMap>
+
     <select id="selectPurchaseList" parameterType="com.ruoyi.system.domain.SysPurchase" resultMap="PurchaseResult">
         select * from sys_purchase
         <where>
@@ -35,7 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select * from sys_purchase where purchase_id = #{purchaseId}
     </select>
 
-    <insert id="insertPurchase" parameterType="com.ruoyi.system.domain.SysPurchase">
+    <insert id="insertPurchase" parameterType="com.ruoyi.system.domain.SysPurchase" useGeneratedKeys="true" keyProperty="purchaseId" keyColumn="purchase_id">
         insert into sys_purchase
         (purchase_no, supplier_id, supplier_name, total_amount, status, remark,
          create_by, create_time, update_by, update_time)
@@ -74,11 +86,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         (purchase_id, food_id, price, qty, sub_total)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{purchaseId}, #{item.foodId}, #{item.price}, #{item.qty}, #{item.subTotal})
+            (#{item.purchaseId}, #{item.foodId}, #{item.price}, #{item.qty}, #{item.subTotal})
         </foreach>
     </insert>
 
-    <select id="selectItemsByPurchaseId" parameterType="Long" resultType="SysPurchaseItem">
+    <select id="selectItemsByPurchaseId" parameterType="Long" resultMap="PurchaseItemResult">
         select spi.purchase_id, spi.food_id, spi.price, spi.qty, spi.sub_total,
                sfi.food_name ,sfi.unit,sfi.food_type
         from sys_purchase_item spi

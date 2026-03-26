@@ -94,8 +94,8 @@ public class SysPurchaseCheckServiceImpl implements ISysPurchaseCheckService
               batch.setCheckId(check.getCheckId());
               batch.setInQty(item.getRealQty());
               batch.setRemainQty(item.getRealQty());
-              batch.setInTime(new Date());
-              batchMapper.insert(batch);
+              batch.setInTime(DateUtils.getNowDate());
+              //batchMapper.insert(batch);
 
               
               actualAmount = actualAmount.add(item.getRealQty().multiply(item.getPrice()));
