@@ -1,5 +1,6 @@
 package com.ruoyi.system.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.ruoyi.common.exception.ServiceException;
@@ -11,8 +12,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ruoyi.system.mapper.SysPurchaseCheckMapper;
+import com.ruoyi.system.mapper.SysPurchaseMapper;
+import com.ruoyi.system.domain.SysFoodInfo;
 import com.ruoyi.system.domain.SysPurchaseCheck;
 import com.ruoyi.system.domain.SysPurchaseCheckItem;
+import com.ruoyi.system.domain.WarehouseBatch;
 import com.ruoyi.system.service.ISysPurchaseCheckService;
 
 /**
@@ -26,6 +30,8 @@ public class SysPurchaseCheckServiceImpl implements ISysPurchaseCheckService
 {
     @Autowired
     private SysPurchaseCheckMapper sysPurchaseCheckMapper;
+    @Autowired
+    private SysPurchaseMapper sysPurchaseMapper;
 
     
     @Override
@@ -48,9 +54,8 @@ public class SysPurchaseCheckServiceImpl implements ISysPurchaseCheckService
       SysPurchaseCheck existCheck = sysPurchaseCheckMapper.selectCheckByPurchaseId(check.getPurchaseId());
       if (existCheck != null) {
           if ("1".equals(existCheck.getCheckResult())) {
-              throw new ServiceException("该采购单已验收合格，不可重复验收！");
-          }
-          if ("2".equals(existCheck.getCheckResult())) {
+              throw new ServiceException("该采购单已验收完成，不可重复验收！");
+          }else{
               // 不合格单：删除旧验收记录，允许重新验收
               sysPurchaseCheckMapper.deleteItemsByCheckId(existCheck.getCheckId());
               sysPurchaseCheckMapper.deletePurchaseCheckById(existCheck.getCheckId());
@@ -69,6 +74,39 @@ public class SysPurchaseCheckServiceImpl implements ISysPurchaseCheckService
             }
             sysPurchaseCheckMapper.insertPurchaseCheckItems(items);
         }
+
+        // 验收完成
+        if("1".equals(check.getCheckResult())) {
+          // 3. 计算实际应付金额（只算合格食材）
+          BigDecimal actualAmount = BigDecimal.ZERO;
+
+          // 2. 验收完成，自动入库
+          // ==============================
+          // 关键：整单完成后 → 统一入库
+          // ==============================
+          for (SysPurchaseCheckItem item : items) {
+            if ("1".equals(item.getItemResult())) { // 只入库合格食材
+              // 生成库存批次
+              WarehouseBatch batch = new WarehouseBatch();
+              batch.setFoodId(item.getFoodId());
+              batch.setFoodName(item.getFoodName());
+              batch.setPurchaseId(check.getPurchaseId());
+              batch.setCheckId(check.getCheckId());
+              batch.setInQty(item.getRealQty());
+              batch.setRemainQty(item.getRealQty());
+              batch.setInTime(new Date());
+              batchMapper.insert(batch);
+
+              
+              actualAmount = actualAmount.add(item.getRealQty().multiply(item.getPrice()));
+            }
+          }
+            // 4. 更新采购单实际金额
+            sysPurchaseMapper.updateActualAmount(check.getPurchaseId(), actualAmount);
+
+        }
+        
+
         return rows;
     }
 

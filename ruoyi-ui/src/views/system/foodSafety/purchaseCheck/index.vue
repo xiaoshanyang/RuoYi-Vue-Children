@@ -126,7 +126,7 @@
             <template slot-scope="scope">
               <el-radio-group v-model="scope.row.expireCheck" @change="calcItemResult(scope.row)" class="radio-vertical">
                 <el-radio label="1">合格</el-radio>
-                <el-radio label="0">不合格</el-radio>
+                <el-radio label="2">不合格</el-radio>
               </el-radio-group>
             </template>
           </el-table-column>
@@ -134,7 +134,7 @@
             <template slot-scope="scope">
               <el-radio-group v-model="scope.row.pesticideCheck" @change="calcItemResult(scope.row)" class="radio-vertical">
                 <el-radio label="1">合格</el-radio>
-                <el-radio label="0">不合格</el-radio>
+                <el-radio label="2">不合格</el-radio>
               </el-radio-group>
             </template>
           </el-table-column>
@@ -142,14 +142,14 @@
             <template slot-scope="scope">
               <el-radio-group v-model="scope.row.appearanceCheck" @change="calcItemResult(scope.row)" class="radio-vertical">
                 <el-radio label="1">合格</el-radio>
-                <el-radio label="0">不合格</el-radio>
+                <el-radio label="2">不合格</el-radio>
               </el-radio-group>
             </template>
           </el-table-column>
           <el-table-column label="明细结果" align="center">
             <template slot-scope="scope">
               <el-tag :type="scope.row.itemResult === '1' ? 'success' : 'danger'">
-                {{ scope.row.itemResult === '1' ? '合格' : '不合格' }}
+                {{ scope.row.itemResult === '1' ? '合格' : (scope.row.itemResult === '2' ? '不合格' : '') }}
               </el-tag>
             </template>
           </el-table-column>
@@ -157,8 +157,8 @@
 
         <el-form-item label="验收总评" label-width="120px" style="margin-top:20px">
           <el-radio-group v-model="form.checkResult">
-            <el-radio label="1">验收合格</el-radio>
-            <el-radio label="2">验收不合格</el-radio>
+            <el-radio label="1">验收完成</el-radio>
+            <el-radio label="2">保存（未完成）</el-radio>
           </el-radio-group>
         </el-form-item>
 
@@ -200,28 +200,28 @@
         <el-table-column label="保质期" align="center">
           <template slot-scope="scope">
             <el-tag :type="scope.row.expireCheck === '1' ? 'success' : 'danger'">
-              {{ scope.row.expireCheck === '1' ? '合格' : '不合格' }}
+              {{ scope.row.expireCheck === '1' ? '合格' : (scope.row.expireCheck === '2' ? '不合格' : '') }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column label="农残检测" align="center">
           <template slot-scope="scope">
             <el-tag :type="scope.row.pesticideCheck === '1' ? 'success' : 'danger'">
-              {{ scope.row.pesticideCheck === '1' ? '合格' : '不合格' }}
+              {{ scope.row.pesticideCheck === '1' ? '合格' : (scope.row.pesticideCheck === '2' ? '不合格' : '') }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column label="外观新鲜度" align="center">
           <template slot-scope="scope">
             <el-tag :type="scope.row.appearanceCheck === '1' ? 'success' : 'danger'">
-              {{ scope.row.appearanceCheck === '1' ? '合格' : '不合格' }}
+              {{ scope.row.appearanceCheck === '1' ? '合格' : (scope.row.appearanceCheck === '2' ? '不合格' : '') }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column label="明细结果" align="center">
           <template slot-scope="scope">
             <el-tag :type="scope.row.itemResult === '1' ? 'success' : 'danger'">
-              {{ scope.row.itemResult === '1' ? '合格' : '不合格' }}
+              {{ scope.row.itemResult === '1' ? '合格' : (scope.row.itemResult === '2' ? '不合格' : '') }}
             </el-tag>
           </template>
         </el-table-column>
@@ -329,21 +329,21 @@ export default {
         foodName: i.foodName,
         planQty: i.qty,
         realQty: i.qty,
-        expireCheck: '1',
-        pesticideCheck: '1',
-        appearanceCheck: '1',
-        itemResult: '1'
+        expireCheck: '0',
+        pesticideCheck: '0',
+        appearanceCheck: '0',
+        itemResult: '0'
       }))
     },
 
     // 自动计算单项结果
     calcItemResult(row) {
       if (
-        row.expireCheck === '0' ||
-        row.pesticideCheck === '0' ||
-        row.appearanceCheck === '0'
+        row.expireCheck === '2' ||
+        row.pesticideCheck === '2' ||
+        row.appearanceCheck === '2'
       ) {
-        row.itemResult = '0'
+        row.itemResult = '2'
       } else {
         row.itemResult = '1'
       }

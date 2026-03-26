@@ -11,6 +11,7 @@ public class SysPurchaseCheckItem {
     private String foodName;
     private BigDecimal planQty;
     private BigDecimal realQty;
+    private BigDecimal price;
     private String expireCheck;
     private String pesticideCheck;
     private String appearanceCheck;

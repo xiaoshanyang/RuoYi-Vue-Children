@@ -105,7 +105,16 @@
               <dict-tag :options="dict.type.food_unit" :value="scope.row.unit" />
             </template>
           </el-table-column>
-          <el-table-column label="单价" prop="price" align="center" />
+          <el-table-column label="单价" prop="price" align="center" width="200">
+            <template slot-scope="scope">
+              <el-input-number style="width:150px" 
+                v-model="scope.row.price" 
+                :min="0" 
+                :precision="2"
+                @change="calcSubtotal(scope.row)"
+              />
+            </template>
+          </el-table-column>
           <el-table-column label="数量" align="center" width="200">
             <template slot-scope="scope">
               <el-input-number style="width:150px" v-model="scope.row.qty" :min="0.01" @change="computeItem(scope.row)" />

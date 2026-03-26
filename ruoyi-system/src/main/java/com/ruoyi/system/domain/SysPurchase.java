@@ -20,6 +20,7 @@ public class SysPurchase extends BaseEntity
     private Long supplierId;
     private String supplierName;
     private BigDecimal totalAmount;
+    private BigDecimal actualAmount;
     private String status;
     private String remark;
     private String auditBy;

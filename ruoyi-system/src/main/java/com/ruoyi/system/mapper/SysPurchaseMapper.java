@@ -22,4 +22,7 @@ public interface SysPurchaseMapper
     void insertPurchaseItems(List<SysPurchaseItem> list);
     List<SysPurchaseItem> selectItemsByPurchaseId(Long purchaseId);
     void deleteItemsByPurchaseId(Long purchaseId);
+
+    // 更新实际金额
+    void updateActualAmount(Long purchaseId, java.math.BigDecimal actualAmount);
 }

@@ -10,6 +10,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="supplierId" column="supplier_id"/>
         <result property="supplierName" column="supplier_name"/>
         <result property="totalAmount" column="total_amount"/>
+        <result property="actualAmount" column="actual_amount"/>
         <result property="status" column="status"/>
         <result property="remark" column="remark"/>
         <result property="auditBy" column="audit_by"/>
@@ -20,7 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime" column="update_time"/>
     </resultMap>
 
-    <select id="selectPurchaseList" parameterType="Purchase" resultMap="PurchaseResult">
+    <select id="selectPurchaseList" parameterType="com.ruoyi.system.domain.SysPurchase" resultMap="PurchaseResult">
         select * from sys_purchase
         <where>
             <if test="purchaseNo != null">and purchase_no like concat('%',#{purchaseNo},'%')</if>
@@ -34,7 +35,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select * from sys_purchase where purchase_id = #{purchaseId}
     </select>
 
-    <insert id="insertPurchase" parameterType="Purchase">
+    <insert id="insertPurchase" parameterType="com.ruoyi.system.domain.SysPurchase">
         insert into sys_purchase
         (purchase_no, supplier_id, supplier_name, total_amount, status, remark,
          create_by, create_time, update_by, update_time)
@@ -43,7 +44,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          #{createBy}, #{createTime}, #{updateBy}, #{updateTime})
     </insert>
 
-    <update id="updatePurchase" parameterType="Purchase">
+    <update id="updatePurchase" parameterType="com.ruoyi.system.domain.SysPurchase">
         update sys_purchase
         <set>
             <if test="purchaseNo != null">purchase_no = #{purchaseNo},</if>
@@ -70,16 +71,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <!-- 明细 -->
     <insert id="insertPurchaseItems">
         insert into sys_purchase_item
-        (purchase_id, food_id, food_name, category, unit, price, qty, sub_total)
+        (purchase_id, food_id, price, qty, sub_total)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{purchaseId}, #{item.foodId}, #{item.foodName}, #{item.category}, #{item.unit},
-             #{item.price}, #{item.qty}, #{item.subTotal})
+            (#{purchaseId}, #{item.foodId}, #{item.price}, #{item.qty}, #{item.subTotal})
         </foreach>
     </insert>
 
-    <select id="selectItemsByPurchaseId" parameterType="Long" resultType="PurchaseItem">
-        select * from sys_purchase_item where purchase_id = #{purchaseId}
+    <select id="selectItemsByPurchaseId" parameterType="Long" resultType="SysPurchaseItem">
+        select spi.purchase_id, spi.food_id, spi.price, spi.qty, spi.sub_total,
+               sfi.food_name ,sfi.unit,sfi.food_type
+        from sys_purchase_item spi
+        left join sys_food_info sfi on spi.food_id = sfi.food_id
+        where spi.purchase_id = #{purchaseId}
     </select>
 
     <delete id="deleteItemsByPurchaseId" parameterType="Long">
