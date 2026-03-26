@@ -3,6 +3,7 @@ package com.ruoyi.system.mapper;
 import java.util.List;
 import com.ruoyi.system.domain.SysPurchase;
 import com.ruoyi.system.domain.SysPurchaseItem;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 食材采购申请Mapper接口
@@ -22,7 +23,8 @@ public interface SysPurchaseMapper
     void insertPurchaseItems(List<SysPurchaseItem> list);
     List<SysPurchaseItem> selectItemsByPurchaseId(Long purchaseId);
     void deleteItemsByPurchaseId(Long purchaseId);
+    SysPurchaseItem selectPurchaseItemByPurchaseId(@Param("purchaseId") Long purchaseId, @Param("foodId") Long foodId);
 
     // 更新实际金额
-    void updateActualAmount(Long purchaseId, java.math.BigDecimal actualAmount);
+    void updateActualAmount(@Param("purchaseId") Long purchaseId, @Param("actualAmount") java.math.BigDecimal actualAmount);
 }

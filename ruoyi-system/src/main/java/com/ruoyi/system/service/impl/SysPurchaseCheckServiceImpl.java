@@ -7,16 +7,14 @@ import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 
+import com.ruoyi.system.domain.*;
+import com.ruoyi.system.mapper.WarehouseBatchMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ruoyi.system.mapper.SysPurchaseCheckMapper;
 import com.ruoyi.system.mapper.SysPurchaseMapper;
-import com.ruoyi.system.domain.SysFoodInfo;
-import com.ruoyi.system.domain.SysPurchaseCheck;
-import com.ruoyi.system.domain.SysPurchaseCheckItem;
-import com.ruoyi.system.domain.WarehouseBatch;
 import com.ruoyi.system.service.ISysPurchaseCheckService;
 
 /**
@@ -32,6 +30,8 @@ public class SysPurchaseCheckServiceImpl implements ISysPurchaseCheckService
     private SysPurchaseCheckMapper sysPurchaseCheckMapper;
     @Autowired
     private SysPurchaseMapper sysPurchaseMapper;
+    @Autowired
+    private WarehouseBatchMapper batchMapper;
 
     
     @Override
@@ -95,10 +95,12 @@ public class SysPurchaseCheckServiceImpl implements ISysPurchaseCheckService
               batch.setInQty(item.getRealQty());
               batch.setRemainQty(item.getRealQty());
               batch.setInTime(DateUtils.getNowDate());
-              //batchMapper.insert(batch);
+              batchMapper.insert(batch);
 
+              // 获取采购单详情，取得采购价格
+                SysPurchaseItem purchaseItem = sysPurchaseMapper.selectPurchaseItemByPurchaseId(check.getPurchaseId(), item.getFoodId());
               
-              actualAmount = actualAmount.add(item.getRealQty().multiply(item.getPrice()));
+              actualAmount = actualAmount.add(item.getRealQty().multiply(purchaseItem.getPrice()));
             }
           }
             // 4. 更新采购单实际金额

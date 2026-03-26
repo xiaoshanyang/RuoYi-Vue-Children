@@ -73,6 +73,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where purchase_id = #{purchaseId}
     </update>
 
+    <update id="updateActualAmount">
+        update sys_purchase
+        set actual_amount = #{actualAmount}
+        where purchase_id = #{purchaseId}
+    </update>
+
     <delete id="deletePurchaseByIds" parameterType="Long">
         delete from sys_purchase where purchase_id in
         <foreach collection="array" item="id" open="(" separator="," close=")">
@@ -96,6 +102,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from sys_purchase_item spi
         left join sys_food_info sfi on spi.food_id = sfi.food_id
         where spi.purchase_id = #{purchaseId}
+    </select>
+
+
+    <select id="selectPurchaseItemByPurchaseId" parameterType="Long" resultMap="PurchaseItemResult">
+        select spi.purchase_id, spi.food_id, spi.price, spi.qty, spi.sub_total,
+               sfi.food_name ,sfi.unit,sfi.food_type
+        from sys_purchase_item spi
+                 left join sys_food_info sfi on spi.food_id = sfi.food_id
+        where spi.purchase_id = #{purchaseId} and spi.food_id = #{foodId}
     </select>
 
     <delete id="deleteItemsByPurchaseId" parameterType="Long">
