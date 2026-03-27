@@ -19,5 +19,24 @@
         values (#{foodId},#{foodName},#{purchaseId},#{checkId},#{inQty},#{remainQty},#{inTime},#{createBy})
     </insert>
 
+      <select id="selectFoodStockList" resultType="com.ruoyi.system.domain.vo.FoodStockVo" parameterType="com.ruoyi.system.domain.vo.FoodStockVo">
+          SELECT
+              warehouse_batch.food_id     AS foodId,
+              sys_food_info.food_name   AS foodName,
+              sys_food_info.food_type   AS foodType,
+              sys_food_info.unit        AS unit,
+              SUM(warehouse_batch.remain_qty) AS totalStock
+          FROM warehouse_batch
+          left join sys_food_info on warehouse_batch.food_id = sys_food_info.food_id
+          WHERE warehouse_batch.remain_qty > 0
+          <if test="foodName != null and foodName != ''">
+              AND sys_food_info.food_name LIKE CONCAT('%', #{foodName}, '%')
+          </if>
+          <if test="foodType != null and foodType != ''">
+              AND sys_food_info.food_type = #{foodType}
+          </if>
+          GROUP BY warehouse_batch.food_id, sys_food_info.food_name
+          ORDER BY warehouse_batch.food_id
+      </select>
     
 </mapper>
