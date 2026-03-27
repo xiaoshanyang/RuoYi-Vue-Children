@@ -13,4 +13,11 @@ public interface WarehouseOutMapper {
         @Param("abnormalStatus") Integer abnormalStatus,
         @Param("startTime") String startTime,
         @Param("endTime") String endTime);
+
+    List<Map<String, Object>> selectOutList(
+        @Param("abnormalStatus") Integer abnormalStatus,
+        @Param("startTime") String startTime,
+        @Param("endTime") String endTime);
+
+    WarehouseOut selectWarehouseOutById(Long outId);
 }

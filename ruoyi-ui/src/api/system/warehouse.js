@@ -45,3 +45,27 @@ export function addWarehouseOut(data) {
     data: data
   })
 }
+
+// 领用单列表
+export function listOut(query) {
+  return request({
+    url: '/system/warehouse/out/list',
+    method: 'get',
+    params: query
+  })
+}
+
+// 领用单详情
+export function getOutDetail(outId) {
+  return request({
+    url: `/system/warehouse/outItems/${outId}`,
+    method: 'get'
+  })
+}
+
+export function getOutById(outId) {
+  return request({
+    url: `/system/warehouse/out/${outId}`,
+    method: 'get'
+  })
+}

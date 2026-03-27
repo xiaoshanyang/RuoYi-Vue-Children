@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.WarehouseOutMapper">
+
+    <select id="selectOutList" resultType="java.util.Map">
+      SELECT
+          out_id,
+          out_time,
+          create_by,
+          abnormal_status,
+          abnormal_note
+      FROM warehouse_out
+      WHERE 1=1
+      <if test="abnormalStatus != null">
+          AND abnormal_status = #{abnormalStatus}
+      </if>
+      <if test="startTime != null and startTime != ''">
+          AND out_time &gt;= #{startTime}
+      </if>
+      <if test="endTime != null and endTime != ''">
+          AND out_time &lt;= #{endTime}
+      </if>
+      ORDER BY out_id DESC
+  </select>
+
+  <select id="selectWarehouseOutById" resultType="com.ruoyi.system.domain.WarehouseOut">
+      SELECT
+          out_id AS outId,
+          out_time AS outTime,
+          create_by AS createBy,
+          abnormal_status AS abnormalStatus,
+          abnormal_note AS abnormalNote
+      FROM warehouse_out
+      WHERE out_id = #{outId}
+  </select>
+
+  <select id="selectAbnormalReport" resultType="java.util.Map">
+        SELECT
+            o.out_id AS outId,
+            o.out_time AS outTime,
+            o.abnormal_status AS abnormalStatus,
+            o.abnormal_note AS abnormalNote,
+            i.food_name AS foodName,
+            i.out_qty AS outQty,
+            b.purchase_id AS purchaseId,
+            b.check_id AS checkId
+        FROM warehouse_out o
+        LEFT JOIN warehouse_out_item i ON o.out_id = i.out_id
+        LEFT JOIN warehouse_batch b ON i.batch_id = b.batch_id
+        WHERE 1=1
+            <if test="abnormalStatus != null">
+                AND o.abnormal_status = #{abnormalStatus}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND o.out_time >= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND o.out_time &lt;= #{endTime}
+            </if>
+        ORDER BY o.out_time DESC
+    </select>
+
+    <insert id="insert" parameterType="WarehouseOut" useGeneratedKeys="true" keyProperty="outId" keyColumn="out_id">
+        insert into warehouse_out
+         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="outTime != null">out_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="abnormalStatus != null">abnormal_status,</if>
+            <if test="abnormalNote != null and abnormalNote != ''">abnormal_note,</if>
+         </trim>
+         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="outTime != null">#{outTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="abnormalStatus != null">#{abnormalStatus},</if>
+            <if test="abnormalNote != null and abnormalNote != ''">#{abnormalNote},</if>
+         </trim>
+    </insert>
+    
+</mapper>

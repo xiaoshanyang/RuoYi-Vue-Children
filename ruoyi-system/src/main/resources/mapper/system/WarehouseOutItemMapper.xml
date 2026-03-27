@@ -2,30 +2,34 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.WarehouseOutItemMapper">
 
-    <select id="selectAbnormalReport" resultType="java.util.Map">
-        SELECT
-            o.out_id AS outId,
-            o.out_time AS outTime,
-            o.abnormal_status AS abnormalStatus,
-            o.abnormal_note AS abnormalNote,
-            i.food_name AS foodName,
-            i.out_qty AS outQty,
-            b.purchase_id AS purchaseId,
-            b.check_id AS checkId
-        FROM warehouse_out o
-        LEFT JOIN warehouse_out_item i ON o.out_id = i.out_id
-        LEFT JOIN warehouse_batch b ON i.batch_id = b.batch_id
-        WHERE 1=1
-            <if test="abnormalStatus != null">
-                AND o.abnormal_status = #{abnormalStatus}
-            </if>
-            <if test="startTime != null and startTime != ''">
-                AND o.out_time >= #{startTime}
-            </if>
-            <if test="endTime != null and endTime != ''">
-                AND o.out_time &lt;= #{endTime}
-            </if>
-        ORDER BY o.out_time DESC
-    </select>
-    
+    <select id="selectByOutId" resultType="com.xxx.domain.WarehouseOutItem">
+      SELECT
+          id,
+          out_id,
+          food_id,
+          food_name,
+          out_qty,
+          batch_id
+      FROM warehouse_out_item
+      WHERE out_id = #{outId}
+      ORDER BY id ASC
+  </select>
+
+  <insert id="insert" parameterType="com.ruoyi.system.domain.WarehouseOutItem" useGeneratedKeys="true" keyProperty="id">
+        insert into warehouse_out_item
+         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="outId != null">out_id,</if>
+            <if test="foodId != null">food_id,</if>
+            <if test="foodName != null">food_name,</if>
+            <if test="outQty != null">out_qty,</if>
+            <if test="batchId != null">batch_id,</if>
+         </trim>
+         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="outId != null">#{outId},</if>
+            <if test="foodId != null">#{foodId},</if>
+            <if test="foodName != null">#{foodName},</if>
+            <if test="outQty != null">#{outQty},</if>
+            <if test="batchId != null">#{batchId},</if>
+         </trim>
+    </insert>
 </mapper>

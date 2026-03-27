@@ -34,7 +34,10 @@
         FROM warehouse_batch
         left join sys_food_info on warehouse_batch.food_id = sys_food_info.food_id
         left join sys_purchase on warehouse_batch.purchase_id = sys_purchase.purchase_id
-         WHERE warehouse_batch.food_id = #{foodId} AND warehouse_batch.remain_qty > 0
+         WHERE  warehouse_batch.remain_qty > 0
+         <if test="foodId != null">
+                AND warehouse_batch.food_id = #{foodId}
+          </if>
         order by warehouse_batch.in_time asc
     </select>
 

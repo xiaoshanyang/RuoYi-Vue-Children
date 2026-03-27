@@ -1,10 +1,12 @@
 package com.ruoyi.web.controller.system;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +30,7 @@ public class WarehouseController extends BaseController {
   @Autowired
   private IWarehouseService warehouseService;
 
-  @PreAuthorize("@ss.hasPermi('system:warehouse:add')")
+  @PreAuthorize("@ss.hasPermi('system:warehouseOut:add')")
   @Log(title = "仓库管理", businessType = BusinessType.INSERT)
   @PostMapping("/createOut")
   public AjaxResult createOut(@RequestBody WarehouseOutVO vo) {
@@ -52,4 +54,17 @@ public class WarehouseController extends BaseController {
       return getDataTable(list);
   }
 
+  @PreAuthorize("@ss.hasPermi('system:warehouseOut:list')")
+  @GetMapping("/out/list")
+  public TableDataInfo list(Integer abnormalStatus, String startTime, String endTime) {
+      startPage();
+      List<Map<String, Object>> list = warehouseService.selectOutList(abnormalStatus, startTime, endTime);
+      return getDataTable(list);
+  }
+
+  @PreAuthorize("@ss.hasPermi('system:warehouseOut:query')")
+  @GetMapping("/{outId}")
+  public AjaxResult getInfo(@PathVariable Long outId) {
+      return success(warehouseService.selectWarehouseOutById(outId));
+  }
 }

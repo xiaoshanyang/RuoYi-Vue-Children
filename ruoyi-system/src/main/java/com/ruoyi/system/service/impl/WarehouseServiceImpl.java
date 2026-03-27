@@ -20,6 +20,7 @@ import com.ruoyi.system.service.IWarehouseService;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class WarehouseServiceImpl implements IWarehouseService {
@@ -78,8 +79,25 @@ public class WarehouseServiceImpl implements IWarehouseService {
         return batchMapper.selectBatchList(foodId, foodName);
     }
 
+    @Override
     public List<FoodStockVo> selectFoodStockList(FoodStockVo foodStockVo) {
         return batchMapper.selectFoodStockList(foodStockVo);
+    }
+
+    @Override
+    public WarehouseOut selectWarehouseOutById(Long outId) {
+        WarehouseOut out = outMapper.selectWarehouseOutById(outId);
+        if (out != null) {
+            List<WarehouseOutItem> items = outItemMapper.selectByOutId(outId);
+            out.setItems(items);
+        }
+        return out;
+    }
+
+
+    @Override
+    public List<Map<String, Object>> selectOutList(Integer abnormalStatus, String startTime, String endTime) {
+        return outMapper.selectOutList(abnormalStatus, startTime, endTime);
     }
 
     // 保存领用明细

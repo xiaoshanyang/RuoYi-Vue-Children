@@ -1,8 +1,10 @@
 package com.ruoyi.system.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.ruoyi.system.domain.WarehouseBatch;
+import com.ruoyi.system.domain.WarehouseOut;
 import com.ruoyi.system.domain.vo.FoodStockVo;
 import com.ruoyi.system.domain.vo.WarehouseOutVO;
 
@@ -39,5 +41,24 @@ public interface IWarehouseService
      * @return 批次列表
      */
     public List<WarehouseBatch> selectBatchList(Long foodId, String foodName);
+
+
+    /**
+     * 查询出库列表
+     *
+     * @param abnormalStatus 异常状态
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 出库列表
+     */
+    public List<Map<String, Object>> selectOutList(Integer abnormalStatus, String startTime, String endTime);
+
+    /**
+     * 根据出库ID查询出库详情
+     *
+     * @param outId 出库ID
+     * @return 出库详情
+     */
+    public WarehouseOut selectWarehouseOutById(Long outId);
 
 }
