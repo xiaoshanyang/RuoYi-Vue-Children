@@ -79,6 +79,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where purchase_id = #{purchaseId}
     </update>
 
+    <update id="updatePurchaseStatus">
+        update sys_purchase
+        set status = #{status}
+        where purchase_id = #{purchaseId}
+    </update>
+
     <delete id="deletePurchaseByIds" parameterType="Long">
         delete from sys_purchase where purchase_id in
         <foreach collection="array" item="id" open="(" separator="," close=")">

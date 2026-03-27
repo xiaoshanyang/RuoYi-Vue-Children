@@ -107,7 +107,8 @@ public class SysPurchaseCheckServiceImpl implements ISysPurchaseCheckService
             sysPurchaseMapper.updateActualAmount(check.getPurchaseId(), actualAmount);
 
         }
-        
+        //0待提交 1待审核 2通过 3驳回 4验收中 5验收完成
+        sysPurchaseMapper.updatePurchaseStatus(check.getPurchaseId(), "1".equals(check.getCheckResult()) ? "5" : "4");
 
         return rows;
     }

@@ -18,6 +18,7 @@ public interface SysPurchaseMapper
     int insertPurchase(SysPurchase purchase);
     int updatePurchase(SysPurchase purchase);
     int deletePurchaseByIds(Long[] ids);
+    void updatePurchaseStatus(@Param("purchaseId") Long purchaseId, @Param("status") String status);
 
     // 明细
     void insertPurchaseItems(List<SysPurchaseItem> list);
