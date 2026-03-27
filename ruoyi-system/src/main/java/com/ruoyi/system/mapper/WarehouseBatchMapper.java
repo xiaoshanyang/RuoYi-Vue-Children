@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface WarehouseBatchMapper {
     List<WarehouseBatch> selectAvailableBatch(@Param("foodId") Long foodId);
+    List<WarehouseBatch> selectBatchList(@Param("foodId") Long foodId, @Param("foodName") String foodName);
     int updateById(WarehouseBatch batch);
     int insert(WarehouseBatch batch);
 

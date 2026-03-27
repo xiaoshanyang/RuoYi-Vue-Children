@@ -98,7 +98,7 @@ public class SysPurchaseCheckServiceImpl implements ISysPurchaseCheckService
               batchMapper.insert(batch);
 
               // 获取采购单详情，取得采购价格
-                SysPurchaseItem purchaseItem = sysPurchaseMapper.selectPurchaseItemByPurchaseId(check.getPurchaseId(), item.getFoodId());
+              SysPurchaseItem purchaseItem = sysPurchaseMapper.selectPurchaseItemByPurchaseId(check.getPurchaseId(), item.getFoodId());
               
               actualAmount = actualAmount.add(item.getRealQty().multiply(purchaseItem.getPrice()));
             }

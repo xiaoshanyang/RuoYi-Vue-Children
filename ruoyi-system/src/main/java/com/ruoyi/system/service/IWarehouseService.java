@@ -2,6 +2,7 @@ package com.ruoyi.system.service;
 
 import java.util.List;
 
+import com.ruoyi.system.domain.WarehouseBatch;
 import com.ruoyi.system.domain.vo.FoodStockVo;
 import com.ruoyi.system.domain.vo.WarehouseOutVO;
 
@@ -29,5 +30,14 @@ public interface IWarehouseService
       * @return 食材库存列表
       */
     public List<FoodStockVo> selectFoodStockList(FoodStockVo foodStockVo);
+
+    /**
+     * 查询批次列表
+     *
+     * @param foodId 食材ID
+     * @param foodName 食材名称（模糊查询）
+     * @return 批次列表
+     */
+    public List<WarehouseBatch> selectBatchList(Long foodId, String foodName);
 
 }

@@ -10,5 +10,6 @@ public class FoodStockVo {
   private String foodName;
   private String unit;
   private String foodType;
+  private Long expireDays;
   private BigDecimal totalStock; // 总库存
 }

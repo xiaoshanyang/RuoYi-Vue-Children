@@ -1,15 +1,12 @@
 package com.ruoyi.system.service.impl;
 
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.SecurityUtils;
-import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.WarehouseBatch;
 import com.ruoyi.system.domain.WarehouseOut;
 import com.ruoyi.system.domain.WarehouseOutItem;
@@ -23,9 +20,6 @@ import com.ruoyi.system.service.IWarehouseService;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
 
 @Service
 public class WarehouseServiceImpl implements IWarehouseService {
@@ -76,6 +70,12 @@ public class WarehouseServiceImpl implements IWarehouseService {
             }
         }
         return result;
+    }
+
+    @Override
+    public List<WarehouseBatch> selectBatchList(Long foodId, String foodName) {
+      List<WarehouseBatch> list = batchMapper.selectBatchList(foodId, foodName);
+        return batchMapper.selectBatchList(foodId, foodName);
     }
 
     public List<FoodStockVo> selectFoodStockList(FoodStockVo foodStockVo) {

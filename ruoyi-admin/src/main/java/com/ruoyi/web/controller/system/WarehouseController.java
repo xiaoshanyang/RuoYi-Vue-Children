@@ -18,6 +18,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.system.domain.vo.WarehouseOutVO;
 import com.ruoyi.system.service.IWarehouseService;
 import com.ruoyi.system.domain.SysPurchaseCheck;
+import com.ruoyi.system.domain.WarehouseBatch;
 import com.ruoyi.system.domain.vo.FoodStockVo;
 
 @RestController
@@ -36,11 +37,19 @@ public class WarehouseController extends BaseController {
   }
 
   @PreAuthorize("@ss.hasPermi('system:warehouse:list')")
-  @GetMapping("/list")
+  @GetMapping("/stock/list")
   public TableDataInfo list(FoodStockVo foodStockVo) {
      startPage();
         List<FoodStockVo> list = warehouseService.selectFoodStockList(foodStockVo);
         return getDataTable(list);
+  }
+
+  @PreAuthorize("@ss.hasPermi('system:warehouseBatch:list')")
+  @GetMapping("/batch/list")
+  public TableDataInfo batchList(Long foodId, String foodName) {
+      startPage();
+      List<WarehouseBatch> list = warehouseService.selectBatchList(foodId, foodName);
+      return getDataTable(list);
   }
 
 }

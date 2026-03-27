@@ -113,7 +113,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectPurchaseItemByPurchaseId" parameterType="Long" resultMap="PurchaseItemResult">
         select spi.purchase_id, spi.food_id, spi.price, spi.qty, spi.sub_total,
-               sfi.food_name ,sfi.unit,sfi.food_type
+               sfi.food_name, sfi.unit,sfi.food_type
         from sys_purchase_item spi
                  left join sys_food_info sfi on spi.food_id = sfi.food_id
         where spi.purchase_id = #{purchaseId} and spi.food_id = #{foodId}

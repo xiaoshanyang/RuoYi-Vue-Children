@@ -1,16 +1,17 @@
 <template>
   <div class="app-container">
-    <el-form :model="query" ref="queryForm" size="small" :inline="true" label-width="80px">
+
+    <el-form :model="query" size="small" :inline="true" label-width="80px">
       <el-form-item label="食材名称">
-        <el-input v-model="query.foodName" placeholder="请输入食材名称" />
+        <el-input v-model="query.foodName" placeholder="请输入" />
       </el-form-item>
       <el-button type="primary" @click="getList">查询</el-button>
       <el-button @click="resetQuery">重置</el-button>
     </el-form>
 
-    <!-- 库存列表 -->
-    <el-table v-loading="loading" :data="list" border>
+    <el-table v-loading="loading" :data="list" border >
       <el-table-column label="序号" type="index" width="60" align="center" :index="index => index + 1" />
+      <el-table-column label="批次ID" prop="batchId" width="100" align="center"/>
       <el-table-column label="食材名称" prop="foodName" align="center"/>
       <el-table-column label="食材类别" align="center" prop="foodType">
         <template slot-scope="scope">
@@ -22,25 +23,19 @@
           <dict-tag :options="dict.type.food_unit" :value="scope.row.unit" />
         </template>
       </el-table-column>
-      <el-table-column label="保质期(天)" align="center" prop="expireDays" />
-      <el-table-column label="当前总库存" prop="totalStock" align="center"/>
-
-      <el-table-column label="操作" width="120" align="center">
+      <el-table-column label="入库数量" prop="inQty" width="120" align="center"/>
+      <el-table-column label="剩余数量" prop="remainQty" width="120" align="center"/>
+      <el-table-column label="入库时间" prop="inTime" width="180" align="center">
         <template slot-scope="scope">
-          <el-button
-            type="primary"
-            size="mini"
-            v-hasPermi="['system:warehouse:view']"
-            @click="viewBatch(scope.row.foodId)"
-          >
-            查看批次
-          </el-button>
+          {{ parseTime(scope.row.inTime) }}
         </template>
       </el-table-column>
+      <el-table-column label="采购单号" prop="purchaseId" width="120" align="center"/>
+      <el-table-column label="验收单号" prop="checkId" width="120" align="center"/>
+      <el-table-column label="供应商名称" align="center" prop="supplierName" />
     </el-table>
 
-    <!-- 分页 -->
-     <pagination
+   <pagination
       v-show="total>0"
       :total="total"
       :page.sync="query.pageNum"
@@ -51,30 +46,36 @@
 </template>
 
 <script>
-import { listFoodStock } from "@/api/system/warehouse";
+import { listBatch } from "@/api/system/warehouse";
 
 export default {
-  name: "FoodStock",
+  name: "WarehouseBatch",
   dicts: ['food_category', 'food_unit'],
   data() {
     return {
-      loading: false,
+      // 遮罩层
+      loading: true,
       list: [],
       total: 0,
       query: {
         pageNum: 1,
         pageSize: 10,
-        foodName: "",
-      },
+        foodId: null,
+        foodName: ""
+      }
     };
   },
   created() {
+    // RuoYi Vue2 正确接收参数写法
+    if (this.$route.query && this.$route.query.foodId) {
+      this.query.foodId = this.$route.query.foodId;
+    }
     this.getList();
   },
   methods: {
     async getList() {
       this.loading = true;
-      const res = await listFoodStock(this.query);
+      const res = await listBatch(this.query);
       this.list = res.rows;
       this.total = res.total;
       this.loading = false;
@@ -83,16 +84,11 @@ export default {
       this.query = {
         pageNum: 1,
         pageSize: 10,
-        foodName: "",
+        foodId: this.$route.query && this.$route.query.foodId ? this.$route.query.foodId : null,
+        foodName: ""
       };
       this.getList();
-    },
-    viewBatch(foodId) {
-      this.$router.push({
-        path: "/foodSafety/warehouseBatch",
-        query: { foodId: foodId }
-      });
-    },
-  },
+    }
+  }
 };
 </script>

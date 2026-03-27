@@ -9,6 +9,15 @@ export function listFoodStock(query) {
   })
 }
 
+// 获取库存批次列表
+export function listBatch(params) {
+  return request({
+    url: '/system/warehouse/batch/list',
+    method: 'get',
+    params: params
+  })
+}
+
 // 异常报表分页查询
 export function listAbnormalReport(query) {
   return request({
