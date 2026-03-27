@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ClassInfoMapper">
+    
+    <resultMap type="SysClass" id="SysClassResult">
+        <result property="id"    column="class_id"    />
+        <result property="classCode"    column="class_code"    />
+        <result property="className"    column="class_name"    />
+        <result property="grade"    column="grade"    />
+        <result property="entryYear"    column="entry_year"    />
+        <result property="teacher"    column="teacher"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark" />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+
+    <select id="selectClassInfoList" parameterType="ClassInfo" resultType="ClassInfo">
+        select class_id, class_code, class_name, grade, entry_year, teacher, status, create_time, remark
+        from class_info
+        <where>
+            <if test="className != null and className != ''">and class_name like concat('%', #{className}, '%')</if>
+            <if test="grade != null">and grade = #{grade}</if>
+            <if test="status != null and status != ''">and status = #{status}</if>
+        </where>
+        order by entry_year desc, grade asc
+    </select>
+
+    <select id="selectClassInfoById" parameterType="Long" resultType="ClassInfo">
+        select * from class_info where class_id = #{classId}
+    </select>
+
+    <insert id="insertClassInfo" parameterType="ClassInfo">
+        insert into class_info(class_code, class_name, grade, entry_year, teacher, status, remark, create_time)
+        values(#{classCode}, #{className}, #{grade}, #{entryYear}, #{teacher}, #{status}, #{remark}, sysdate())
+    </insert>
+
+    <update id="updateClassInfo" parameterType="ClassInfo">
+        update class_info
+        <set>
+            <if test="classCode != null">class_code = #{classCode},</if>
+            <if test="className != null">class_name = #{className},</if>
+            <if test="grade != null">grade = #{grade},</if>
+            <if test="entryYear != null">entry_year = #{entryYear},</if>
+            <if test="teacher != null">teacher = #{teacher},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark}</if>
+        </set>
+        where class_id = #{classId}
+    </update>
+
+    <delete id="deleteClassInfoById" parameterType="Long">
+        delete from class_info where class_id = #{classId}
+    </delete>
+
+    <!-- 一键升班 SQL -->
+    <update id="upgradeGrade">
+        update class_info set grade = grade + 1 where grade &lt; 3 and status = '0'
+    </update>
+</mapper>

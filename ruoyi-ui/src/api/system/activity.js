@@ -1,53 +1,52 @@
 import request from '@/utils/request'
 
-// 查询活动信息列表
-export function listActivity(query) {
+// 查询班级列表
+export function listClassInfo(query) {
   return request({
-    url: '/activity/activityInfo/list',
+    url: '/activity/classInfo/list',
     method: 'get',
     params: query
   })
 }
 
-// 查询活动信息详细
-export function getActivity(id) {
+// 查询班级详细
+export function getClassInfo(classId) {
   return request({
-    url: '/activity/activityInfo/' + id,
+    url: '/activity/classInfo/' + classId,
     method: 'get'
   })
 }
 
-// 新增活动信息
-export function addActivity(data) {
+// 新增班级
+export function addClassInfo(data) {
   return request({
-    url: '/activity/activityInfo',
+    url: '/activity/classInfo',
     method: 'post',
     data: data
   })
 }
 
-// 新增活动信息
-export function startActivity(data) {
+// 修改班级
+export function updateClassInfo(data) {
   return request({
-    url: '/activity/activityInfo/start',
-    method: 'post',
-    data: data
-  })
-}
-
-// 修改活动信息
-export function updateActivity(data) {
-  return request({
-    url: '/activity/activityInfo',
+    url: '/activity/classInfo',
     method: 'put',
     data: data
   })
 }
 
-// 删除活动信息
-export function delActivity(id) {
+// 删除班级
+export function delClassInfo(classId) {
   return request({
-    url: '/activity/activityInfo/' + id,
+    url: '/activity/classInfo/' + classId,
     method: 'delete'
+  })
+}
+
+// 一键升班
+export function upgradeGrade() {
+  return request({
+    url: '/activity/classInfo/upgrade',
+    method: 'post'
   })
 }

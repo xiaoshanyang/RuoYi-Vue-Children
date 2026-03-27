@@ -1,7 +1,6 @@
 package com.ruoyi.system.mapper;
 
 import java.util.List;
-import com.ruoyi.system.domain.SysChild;
 
 /**
  * 幼儿信息（无冗余班级名称）Mapper接口

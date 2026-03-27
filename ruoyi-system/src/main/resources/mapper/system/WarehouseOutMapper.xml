@@ -4,11 +4,11 @@
 
     <select id="selectOutList" resultType="java.util.Map">
       SELECT
-          out_id,
-          out_time,
-          create_by,
-          abnormal_status,
-          abnormal_note
+          out_id as outId,
+          out_time as outTime,
+          create_by as createBy,
+          abnormal_status as abnormalStatus,
+          abnormal_note as abnormalNote
       FROM warehouse_out
       WHERE 1=1
       <if test="abnormalStatus != null">

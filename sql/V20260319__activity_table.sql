@@ -1,32 +1,47 @@
--- 活动信息表（核心表）
-CREATE TABLE IF NOT EXISTS sys_activity (
-  id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  activity_name VARCHAR(100) NOT NULL COMMENT '活动名称',
-  activity_type VARCHAR(50) NOT NULL COMMENT '活动类型：课堂活动/户外活动/午睡活动',
-  class_name VARCHAR(50) NOT NULL COMMENT '参与班级',
-  activity_place VARCHAR(100) COMMENT '活动地点',
-  preset_duration INT NOT NULL COMMENT '预设时长(分钟)',
-  actual_duration INT DEFAULT 0 COMMENT '实际时长(分钟)',
-  activity_status VARCHAR(20) DEFAULT '未开始' COMMENT '活动状态：未开始/监控中/已完成/超时完成',
-  create_by VARCHAR(64) DEFAULT '' COMMENT '创建者',
-  create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  update_by VARCHAR(64) DEFAULT '' COMMENT '更新者',
-  update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='活动信息表';
+CREATE TABLE class_info (
+    class_id BIGINT AUTO_INCREMENT COMMENT '班级ID',
+    class_code VARCHAR(50) NOT NULL COMMENT '固定编号 C202401',
+    class_name VARCHAR(50) NOT NULL COMMENT '当前名称 小一班',
+    grade INT NOT NULL COMMENT '年级 1小班 2中班 3大班',
+    entry_year INT NOT NULL COMMENT '入园年份 2025',
+    teacher VARCHAR(30) COMMENT '班主任',
+    status CHAR(1) DEFAULT '0' COMMENT '0正常 1毕业',
+    create_time DATETIME,
+    remark VARCHAR(255),
+    PRIMARY KEY (class_id)
+) ENGINE=InnoDB COMMENT='班级信息';
 
--- 活动监控记录表（记录计时/提醒日志）
-CREATE TABLE IF NOT EXISTS sys_activity_monitor (
-  id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  activity_id BIGINT NOT NULL COMMENT '活动ID',
-  start_time DATETIME COMMENT '活动开始时间',
-  end_time DATETIME COMMENT '活动结束时间',
-  remind_time DATETIME COMMENT '超时提醒时间',
-  remark VARCHAR(500) COMMENT '监控备注（如：超时10分钟提醒）',
-  create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='活动监控记录表';
+CREATE TABLE activity (
+       activity_id BIGINT AUTO_INCREMENT COMMENT '活动ID',
+      class_id BIGINT COMMENT '班级ID',
+      class_code VARCHAR(50) NOT NULL COMMENT '快照编号',
+      grade_name VARCHAR(20) NOT NULL COMMENT '快照年级 小班',
+      class_full_name VARCHAR(50) NOT NULL COMMENT '快照班级 小一班',
+      activity_name VARCHAR(100) NOT NULL COMMENT '活动名称',
+      activity_time DATETIME COMMENT '活动时间',
+      place VARCHAR(100) COMMENT '活动地点',
+      charge_by VARCHAR(30) COMMENT '负责人',
+      content VARCHAR(500) COMMENT '活动内容',
+      create_time DATETIME,
+      remark VARCHAR(255),
+      PRIMARY KEY (activity_id)
+) ENGINE=InnoDB COMMENT='活动信息';
 
+CREATE TABLE activity_monitor (
+      monitor_id BIGINT AUTO_INCREMENT COMMENT '监控ID',
+      activity_id BIGINT NOT NULL COMMENT '活动ID',
+      monitor_time DATETIME COMMENT '监控时间',
+      monitor_status INT DEFAULT 0 COMMENT '0正常 1异常',
+      order_status INT COMMENT '秩序 0好 1一般 2差',
+      safe_hidden INT COMMENT '安全隐患 0无 1有',
+      child_emotion INT COMMENT '情绪 0好 1一般 2差',
+      abnormal_desc VARCHAR(500) COMMENT '异常描述',
+      handle_method VARCHAR(500) COMMENT '处理措施',
+      handle_result VARCHAR(500) COMMENT '处理结果',
+      monitor_by VARCHAR(30) COMMENT '监控人',
+      create_time DATETIME,
+      PRIMARY KEY (monitor_id)
+) ENGINE=InnoDB COMMENT='活动监控记录';
 -- 菜单 SQL
 insert into sys_menu (menu_name, parent_id, order_num, path, component, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
 values('活动监控记录', '3', '1', 'monitor', 'system/monitor/index', 1, 0, 'C', '0', '0', 'system:monitor:list', '#', 'admin', sysdate(), '', null, '活动监控记录菜单');

@@ -63,7 +63,7 @@ public class WarehouseController extends BaseController {
   }
 
   @PreAuthorize("@ss.hasPermi('system:warehouseOut:query')")
-  @GetMapping("/{outId}")
+  @GetMapping("/out/{outId}")
   public AjaxResult getInfo(@PathVariable Long outId) {
       return success(warehouseService.selectWarehouseOutById(outId));
   }

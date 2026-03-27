@@ -41,7 +41,11 @@
     <el-table v-loading="loading" :data="list" border >
       <el-table-column label="序号" type="index" width="60" align="center" :index="index => index + 1" />
       <el-table-column label="领用单号" prop="outId"></el-table-column>
-      <el-table-column label="领用时间" prop="outTime"></el-table-column>
+      <el-table-column label="领用时间" prop="outTime">
+        <template  slot-scope="scope">
+          <span>{{ parseTime(scope.row.outTime) }} </span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作人" prop="createBy"></el-table-column>
       <el-table-column label="状态" width="100">
         <template slot-scope="scope">
@@ -169,24 +173,15 @@
       append-to-body
     >
       <el-table :data="viewItems" border>
-          <el-table-column label="食材名称" prop="foodName"></el-table-column>
-          <el-table-column label="单位">
-            <template slot-scope="scope">
-              <dict-tag :options="dict.type.food_unit" :value="scope.row.unit" />
-            </template>
-          </el-table-column>
-          <el-table-column label="库存数量" prop="stockQty" />
-          <el-table-column label="领用数量" width="200">
-            <template slot-scope="scope">
-              <el-input-number
-                v-model="scope.row.outQty"
-                :min="0.1"
-                step="0.1"
-                style="width:150px" 
-              ></el-input-number>
-            </template>
-          </el-table-column>
-        </el-table>
+        <el-table-column label="序号" type="index" width="60" align="center" :index="index => index + 1" />
+        <el-table-column label="食材名称" prop="foodName"></el-table-column>
+        <el-table-column label="单位">
+          <template slot-scope="scope">
+            <dict-tag :options="dict.type.food_unit" :value="scope.row.unit" />
+          </template>
+        </el-table-column>
+        <el-table-column label="领用数量" width="200" prop="outQty" />            
+      </el-table>
 
       <div slot="footer">
         <el-button @click="viewOpen = false">关闭</el-button>
@@ -308,13 +303,9 @@ export default {
     },
     async viewDetail(outId) {
       var res = await getOutById(outId);
-      this.viewItems = res.itemList;
+      console.log(res)
+      this.viewItems = res.data.items;
       this.viewOpen = true;
-    },
-    parseTime(time, pattern) {
-      // RuoYi 自带时间格式化
-      if (!time) return "";
-      return this.$options.filters.parseTime(time, pattern);
     },
   },
 };

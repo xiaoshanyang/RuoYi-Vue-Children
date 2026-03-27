@@ -2,6 +2,8 @@ package com.ruoyi.web.controller.system;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.system.domain.ClassInfo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +19,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.system.domain.SysClass;
-import com.ruoyi.system.service.ISysClassService;
+import com.ruoyi.system.service.IClassInfoService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 
@@ -28,77 +30,67 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @date 2026-03-22
  */
 @RestController
-@RequestMapping("/base/class")
-public class SysClassController extends BaseController
+@RequestMapping("/activity/classInfo")
+public class ClassInfoController extends BaseController
 {
     @Autowired
-    private ISysClassService sysClassService;
+    private IClassInfoService classInfoService;
 
     /**
      * 查询班级信息（按届命名）列表
      */
-    @PreAuthorize("@ss.hasPermi('base:class:list')")
+    @PreAuthorize("@ss.hasPermi('system:classInfo:list')")
     @GetMapping("/list")
-    public TableDataInfo list(SysClass sysClass)
-    {
+    public TableDataInfo list(ClassInfo classInfo) {
         startPage();
-        List<SysClass> list = sysClassService.selectSysClassList(sysClass);
+        List<ClassInfo> list = classInfoService.selectClassInfoList(classInfo);
         return getDataTable(list);
-    }
-
-    /**
-     * 导出班级信息（按届命名）列表
-     */
-    @PreAuthorize("@ss.hasPermi('base:class:export')")
-    @Log(title = "班级信息（按届命名）", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, SysClass sysClass)
-    {
-        List<SysClass> list = sysClassService.selectSysClassList(sysClass);
-        ExcelUtil<SysClass> util = new ExcelUtil<SysClass>(SysClass.class);
-        util.exportExcel(response, list, "班级信息（按届命名）数据");
     }
 
     /**
      * 获取班级信息（按届命名）详细信息
      */
-    @PreAuthorize("@ss.hasPermi('base:class:query')")
-    @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
-        return success(sysClassService.selectSysClassById(id));
+    @PreAuthorize("@ss.hasPermi('system:classInfo:query')")
+    @GetMapping(value = "/{classId}")
+    public AjaxResult getInfo(@PathVariable("classId") Long classId) {
+        return success(classInfoService.selectClassInfoById(classId));
     }
 
     /**
      * 新增班级信息（按届命名）
      */
-    @PreAuthorize("@ss.hasPermi('base:class:add')")
+    @PreAuthorize("@ss.hasPermi('system:classInfo:add')")
     @Log(title = "班级信息（按届命名）", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody SysClass sysClass)
-    {
-        return toAjax(sysClassService.insertSysClass(sysClass));
+    public AjaxResult add(@RequestBody ClassInfo classInfo) {
+        return toAjax(classInfoService.insertClassInfo(classInfo));
     }
 
     /**
      * 修改班级信息（按届命名）
      */
-    @PreAuthorize("@ss.hasPermi('base:class:edit')")
+    @PreAuthorize("@ss.hasPermi('system:classInfo:edit')")
     @Log(title = "班级信息（按届命名）", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody SysClass sysClass)
-    {
-        return toAjax(sysClassService.updateSysClass(sysClass));
+    public AjaxResult edit(@RequestBody ClassInfo classInfo) {
+        return toAjax(classInfoService.updateClassInfo(classInfo));
     }
 
     /**
      * 删除班级信息（按届命名）
      */
-    @PreAuthorize("@ss.hasPermi('base:class:remove')")
+    @PreAuthorize("@ss.hasPermi('system:classInfo:remove')")
     @Log(title = "班级信息（按届命名）", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
-        return toAjax(sysClassService.deleteSysClassByIds(ids));
+    public AjaxResult remove(@PathVariable Long[] classIds) {
+        return toAjax(classInfoService.deleteClassInfoByIds(classIds));
+    }
+
+    // 一键升班接口
+    @PreAuthorize("@ss.hasPermi('system:classInfo:edit')")
+    @Log(title = "班级信息（按届命名）", businessType = BusinessType.UPDATE)
+    @PostMapping("/upgrade")
+    public AjaxResult upgrade() {
+        return toAjax(classInfoService.upgradeGrade());
     }
 }
