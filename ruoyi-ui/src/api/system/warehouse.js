@@ -1,5 +1,14 @@
 import request from '@/utils/request'
 
+// 库存总览列表
+export function listFoodStock(query) {
+  return request({
+    url: '/system/warehouse/stock/list',
+    method: 'get',
+    params: query
+  })
+}
+
 // 异常报表分页查询
 export function listAbnormalReport(query) {
   return request({

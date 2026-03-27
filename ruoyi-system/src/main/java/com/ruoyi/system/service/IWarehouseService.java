@@ -1,5 +1,8 @@
 package com.ruoyi.system.service;
 
+import java.util.List;
+
+import com.ruoyi.system.domain.vo.FoodStockVo;
 import com.ruoyi.system.domain.vo.WarehouseOutVO;
 
 /**
@@ -18,5 +21,13 @@ public interface IWarehouseService
      * @return 结果
      */
     public int createWarehouseOut(WarehouseOutVO vo);
+      
+    /**
+      * 查询食材库存列表
+      * 
+      * @param foodStockVo 食材库存查询条件
+      * @return 食材库存列表
+      */
+    public List<FoodStockVo> selectFoodStockList(FoodStockVo foodStockVo);
 
 }

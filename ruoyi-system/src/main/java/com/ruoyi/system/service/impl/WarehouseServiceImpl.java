@@ -15,6 +15,7 @@ import com.ruoyi.system.domain.WarehouseOut;
 import com.ruoyi.system.domain.WarehouseOutItem;
 import com.ruoyi.system.domain.vo.WarehouseOutVO;
 import com.ruoyi.system.domain.vo.WarehouseOutItemVo;
+import com.ruoyi.system.domain.vo.FoodStockVo;
 import com.ruoyi.system.mapper.WarehouseBatchMapper;
 import com.ruoyi.system.mapper.WarehouseOutItemMapper;
 import com.ruoyi.system.mapper.WarehouseOutMapper;
@@ -77,6 +78,9 @@ public class WarehouseServiceImpl implements IWarehouseService {
         return result;
     }
 
+    public List<FoodStockVo> selectFoodStockList(FoodStockVo foodStockVo) {
+        return batchMapper.selectFoodStockList(foodStockVo);
+    }
 
     // 保存领用明细
     private void saveItem(Long outId, WarehouseOutItemVo item, BigDecimal qty, Long batchId) {
