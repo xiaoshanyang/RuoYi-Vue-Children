@@ -44,6 +44,11 @@ public interface ISysUserService
     public SysUser selectUserByUserName(String userName);
 
     /**
+     * 根据角色权限字符查询用户列表
+     */
+    List<SysUser> selectUserByRoleKey(String roleKey);
+
+    /**
      * 通过用户ID查询用户
      * 
      * @param userId 用户ID

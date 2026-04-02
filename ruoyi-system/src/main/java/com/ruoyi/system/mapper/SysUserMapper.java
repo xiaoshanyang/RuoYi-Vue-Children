@@ -36,6 +36,8 @@ public interface SysUserMapper
      */
     public List<SysUser> selectUnallocatedList(SysUser user);
 
+    List<SysUser> selectUserByRoleKey(String roleKey);
+
     /**
      * 通过用户名查询用户
      * 

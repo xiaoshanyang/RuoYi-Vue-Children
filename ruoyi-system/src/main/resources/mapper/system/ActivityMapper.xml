@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ActivityMapper">
+
+    <resultMap type="com.ruoyi.system.domain.Activity" id="ActivityResult">
+        <result property="activityId" column="activity_id" />
+        <result property="classId"    column="class_id"    />
+        <result property="classCode"    column="class_code"    />
+        <result property="gradeName"    column="grade_name"    />
+        <result property="classFullName"    column="class_full_name"    />
+        <result property="activityName"    column="activity_name"    />
+        <result property="activityTime"    column="activity_time" />
+        <result property="place"    column="place" />
+        <result property="chargeBy"    column="charge_by" />
+        <result property="content"    column="content" />
+        <result property="remark"    column="remark" />
+
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <select id="selectActivityList" parameterType="Activity" resultMap="ActivityResult">
+        select activity_id, class_id, class_code, grade_name, class_full_name,
+        activity_name, activity_time, place, charge_by, content, remark
+        from activity
+        <where>
+            <if test="activityName != null and activityName != ''">
+                and activity_name like concat('%', #{activityName}, '%')
+            </if>
+            <if test="classId != null">
+                and class_id = #{classId}
+            </if>
+        </where>
+        order by activity_time desc
+    </select>
+
+    <select id="selectActivityById" parameterType="Long" resultMap="ActivityResult">
+        select * from activity where activity_id = #{activityId}
+    </select>
+
+    <insert id="insertActivity" parameterType="Activity">
+        insert into activity(class_id, class_code, grade_name, class_full_name,
+                             activity_name, activity_time, place, charge_by, content, remark)
+        values(#{classId}, #{classCode}, #{gradeName}, #{classFullName},
+               #{activityName}, #{activityTime}, #{place}, #{chargeBy}, #{content}, #{remark})
+    </insert>
+
+    <update id="updateActivity" parameterType="Activity">
+        update activity
+        <set>
+            <if test="activityName != null">activity_name = #{activityName},</if>
+            <if test="activityTime != null">activity_time = #{activityTime},</if>
+            <if test="place != null">place = #{place},</if>
+            <if test="chargeBy != null">charge_by = #{chargeBy},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="remark != null">remark = #{remark}</if>
+        </set>
+        where activity_id = #{activityId}
+    </update>
+
+    <delete id="deleteActivityById" parameterType="Long">
+        delete from activity where activity_id = #{activityId}
+    </delete>
+
+</mapper>

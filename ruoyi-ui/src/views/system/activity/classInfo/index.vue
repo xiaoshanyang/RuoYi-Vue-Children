@@ -48,6 +48,7 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="handleEdit(scope.row)">编辑</el-button>
+          <el-button type="success" size="mini" @click="openTeacherDialog(row)">配置教师</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -90,11 +91,54 @@
         <el-button type="primary" @click="submit">确定</el-button>
       </div>
     </el-dialog>
+
+    <!-- 班级教师配置弹窗 -->
+    <el-dialog title="班级教师配置" :visible.sync="teacherDialogVisible" width="600px">
+      <el-form :model="teacherForm" label-width="120px">
+
+        <el-form-item label="班级教师">
+          <el-select
+            v-model="teacherForm.userIds"
+            multiple
+            placeholder="请选择任课教师"
+            style="width:100%"
+          >
+            <el-option
+              v-for="user in teacherOptions"
+              :key="user.userId"
+              :label="user.userName"
+              :value="user.userId"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="班主任">
+          <el-select
+            v-model="teacherForm.leaderUserId"
+            placeholder="请指定班主任（必选）"
+            style="width:100%"
+          >
+            <el-option
+              v-for="uid in teacherForm.userIds"
+              :key="uid"
+              :label="getTeacherName(uid)"
+              :value="uid"
+            />
+          </el-select>
+        </el-form-item>
+
+      </el-form>
+
+      <div slot="footer">
+        <el-button @click="teacherDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitTeachers">确定保存</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listClassInfo, getClassInfo, addClassInfo, updateClassInfo, upgradeGrade } from "@/api/system/activity";
+import { listClassInfo, getClassInfo, addClassInfo, updateClassInfo, upgradeGrade, teacherList, getClassTeachers, saveClassTeachers } from "@/api/system/class";
 
 export default {
   name: "ClassInfo",
@@ -110,6 +154,13 @@ export default {
         className: [{ required: true, message: "班级名称不能为空" }],
         grade: [{ required: true, message: "年级不能为空" }],
         entryYear: [{ required: true, message: "入园年份不能为空" }]
+      },
+      teacherDialogVisible: false,
+      currentClassId: null,
+      teacherOptions: [],
+      teacherForm: {
+        userIds: [],
+        leaderUserId: null
       }
     };
   },
@@ -146,6 +197,50 @@ export default {
       await upgradeGrade();
       this.$message.success("升班成功");
       this.getList();
+    },
+    // 打开教师配置
+    async openTeacherDialog(row) {
+      this.currentClassId = row.classId;
+      this.teacherDialogVisible = true;
+      await this.loadTeacherOptions();
+      await this.loadClassTeacherSelected();
+    },
+
+    // 加载系统教师列表
+    async loadTeacherOptions() {
+      const res = await teacherList();
+      this.teacherOptions = res.data;
+    },
+
+    // 加载该班已选教师
+    async loadClassTeacherSelected() {
+      const res = await getClassTeachers(this.currentClassId);
+      let list = res.data;
+      this.teacherForm.userIds = list.map(t => t.userId);
+
+      let leader = list.find(t => t.isLeader === '1');
+      this.teacherForm.leaderUserId = leader ? leader.userId : null;
+    },
+
+    // 根据ID获取教师姓名
+    getTeacherName(userId) {
+      let user = this.teacherOptions.find(u => u.userId === userId);
+      return user ? user.userName : "";
+    },
+
+    // 提交保存
+    async submitTeachers() {
+      if (!this.teacherForm.leaderUserId) {
+        this.$message.warning("请指定班主任");
+        return;
+      }
+      await saveClassTeachers({
+        classId: this.currentClassId,
+        userIds: this.teacherForm.userIds,
+        leaderUserId: this.teacherForm.leaderUserId
+      });
+      this.$message.success("保存成功");
+      this.teacherDialogVisible = false;
     }
   }
 };

@@ -1,9 +1,12 @@
 package com.ruoyi.web.controller.system;
 
 import java.util.List;
-import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.system.domain.ClassInfo;
+import com.ruoyi.system.service.IClassTeacherService;
+import com.ruoyi.system.service.ISysUserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +21,7 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.system.domain.SysClass;
 import com.ruoyi.system.service.IClassInfoService;
-import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
@@ -30,11 +31,17 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @date 2026-03-22
  */
 @RestController
-@RequestMapping("/activity/classInfo")
+@RequestMapping("/system/activity/classInfo")
 public class ClassInfoController extends BaseController
 {
     @Autowired
     private IClassInfoService classInfoService;
+
+    @Autowired
+    private ISysUserService sysUserService;
+
+    @Autowired
+    private IClassTeacherService classTeacherService;
 
     /**
      * 查询班级信息（按届命名）列表
@@ -92,5 +99,35 @@ public class ClassInfoController extends BaseController
     @PostMapping("/upgrade")
     public AjaxResult upgrade() {
         return toAjax(classInfoService.upgradeGrade());
+    }
+
+    // 获取班级教师
+    @PreAuthorize("@ss.hasPermi('system:classInfo:edit')")
+    @Log(title = "班级信息（按届命名）", businessType = BusinessType.UPDATE)
+    @GetMapping("/teachers/{classId}")
+    public AjaxResult teachers(@PathVariable Long classId) {
+        return success(classTeacherService.getTeachersByClassId(classId));
+    }
+
+    // 保存班级教师（含班主任）
+    @PreAuthorize("@ss.hasPermi('system:classInfo:edit')")
+    @Log(title = "班级信息（按届命名）", businessType = BusinessType.UPDATE)
+    @PostMapping("/saveTeachers")
+    public AjaxResult saveTeachers(@RequestBody Map<String, Object> params) {
+        Long classId = Long.valueOf(params.get("classId").toString());
+        List<Long> userIds = (List<Long>) params.get("userIds");
+        Long leaderUserId = params.get("leaderUserId") != null
+                ? Long.valueOf(params.get("leaderUserId").toString())
+                : null;
+
+        classTeacherService.saveClassTeachers(classId, userIds, leaderUserId);
+        return success();
+    }
+
+    // 获取教师下拉（角色：teacher）
+    @GetMapping("/teacherList")
+    public AjaxResult teacherList() {
+        List<SysUser> list = sysUserService.selectUserByRoleKey("teacher");
+        return success(list);
     }
 }

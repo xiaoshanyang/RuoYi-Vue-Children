@@ -1,52 +1,72 @@
 import request from '@/utils/request'
 
-// 查询班级列表
-export function listClassInfo(query) {
+// 活动列表
+export function listActivity(query) {
   return request({
-    url: '/activity/classInfo/list',
+    url: '/system/activity/activityInfo/list',
     method: 'get',
     params: query
   })
 }
 
-// 查询班级详细
-export function getClassInfo(classId) {
+// 活动详情
+export function getActivity(activityId) {
   return request({
-    url: '/activity/classInfo/' + classId,
+    url: '/system/activity/activityInfo/' + activityId,
     method: 'get'
   })
 }
 
-// 新增班级
-export function addClassInfo(data) {
+// 新增活动
+export function addActivity(data) {
   return request({
-    url: '/activity/classInfo',
+    url: '/system/activity/activityInfo',
     method: 'post',
     data: data
   })
 }
 
-// 修改班级
-export function updateClassInfo(data) {
+// 修改活动
+export function updateActivity(data) {
   return request({
-    url: '/activity/classInfo',
+    url: '/system/activity/activityInfo',
     method: 'put',
     data: data
   })
 }
 
-// 删除班级
-export function delClassInfo(classId) {
+// 删除活动
+export function delActivity(activityId) {
   return request({
-    url: '/activity/classInfo/' + classId,
+    url: '/system/activity/activityInfo/' + activityId,
     method: 'delete'
   })
 }
 
-// 一键升班
-export function upgradeGrade() {
+// 获取班级下拉
+export function classList() {
   return request({
-    url: '/activity/classInfo/upgrade',
-    method: 'post'
+    url: '/system/activity/activityInfo/classList',
+    method: 'get'
+  })
+}
+
+
+// Monitor
+// 新增监控
+export function addMonitor(data) {
+  return request({
+    url: '/activity/monitor',
+    method: 'post',
+    data: data
+  })
+}
+
+// 监控记录列表
+export function listMonitor(query) {
+  return request({
+    url: '/activity/monitor/list',
+    method: 'get',
+    params: query
   })
 }

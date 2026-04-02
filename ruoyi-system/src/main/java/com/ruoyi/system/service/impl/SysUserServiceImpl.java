@@ -105,6 +105,11 @@ public class SysUserServiceImpl implements ISysUserService
         return userMapper.selectUnallocatedList(user);
     }
 
+    @Override
+    public List<SysUser> selectUserByRoleKey(String roleKey) {
+        return userMapper.selectUserByRoleKey(roleKey);
+    }
+
     /**
      * 通过用户名查询用户
      * 

@@ -7,6 +7,7 @@ import com.ruoyi.system.mapper.ClassInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.service.IClassInfoService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 班级信息（按届命名）Service业务层处理
@@ -43,6 +44,16 @@ public class ClassInfoServiceImpl implements IClassInfoService {
     @Override
     public int deleteClassInfoById(Long classId) {
         return classInfoMapper.deleteClassInfoById(classId);
+    }
+
+    @Transactional
+    @Override
+    public int deleteClassInfoByIds(Long[] classIds) {
+        int id = classIds.length;
+        for (Long classId : classIds) {
+            classInfoMapper.deleteClassInfoById(classId);
+        }
+        return id;
     }
 
     @Override

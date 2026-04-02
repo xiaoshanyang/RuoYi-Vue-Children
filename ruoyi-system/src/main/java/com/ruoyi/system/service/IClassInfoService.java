@@ -3,7 +3,6 @@ package com.ruoyi.system.service;
 import java.util.List;
 
 import com.ruoyi.system.domain.ClassInfo;
-import com.ruoyi.system.domain.SysClass;
 
 /**
  * 班级信息（按届命名）Service接口
@@ -17,5 +16,6 @@ public interface IClassInfoService {
     int insertClassInfo(ClassInfo classInfo);
     int updateClassInfo(ClassInfo classInfo);
     int deleteClassInfoById(Long classId);
+    int deleteClassInfoByIds(Long[] classIds);
     int upgradeGrade();
 }

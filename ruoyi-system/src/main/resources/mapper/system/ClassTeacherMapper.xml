@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ClassTeacherMapper">
+
+    <resultMap type="com.ruoyi.system.domain.ClassTeacher" id="ClassTeacherResult">
+        <result property="classId"    column="class_id"    />
+        <result property="classCode"    column="class_code"    />
+        <result property="className"    column="class_name"    />
+        <result property="grade"    column="grade"    />
+        <result property="entryYear"    column="entry_year"    />
+        <result property="teacher"    column="teacher"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark" />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <select id="selectByClassId" resultType="ClassTeacher">
+        SELECT * FROM class_teacher
+        WHERE class_id = #{classId}
+        ORDER BY is_leader DESC, id ASC
+    </select>
+
+    <select id="selectByClassAndUser" resultType="ClassTeacher">
+        SELECT * FROM class_teacher
+        WHERE class_id = #{classId} AND user_id = #{userId}
+    </select>
+
+    <insert id="insertClassTeacher">
+        INSERT INTO class_teacher (class_id, user_id, user_name, is_leader, status)
+        VALUES (#{classId}, #{userId}, #{userName}, #{isLeader}, #{status})
+    </insert>
+
+    <update id="updateClassTeacher">
+        UPDATE class_teacher
+        SET status = #{status}, is_leader = #{isLeader}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateStatusToLeaveByClassId">
+        UPDATE class_teacher
+        SET status = '1'
+        WHERE class_id = #{classId}
+    </update>
+
+    <update id="clearLeader">
+        UPDATE class_teacher SET is_leader = '0'
+        WHERE class_id = #{classId}
+    </update>
+
+    <update id="setLeader">
+        UPDATE class_teacher SET is_leader = '1'
+        WHERE class_id = #{classId} AND user_id = #{userId}
+    </update>
+
+</mapper>
+
+
