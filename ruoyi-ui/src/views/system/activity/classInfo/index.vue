@@ -36,19 +36,24 @@
           </el-tag>
         </template>
       </el-table-column>
+      <el-table-column label="学年" prop="schoolYear" />
       <el-table-column label="入园年份" prop="entryYear"/>
       <el-table-column label="班主任" prop="teacher"/>
       <el-table-column label="状态">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.status == '0' ? 'success' : 'danger'">
-            {{ scope.row.status == '0' ? '正常' : '毕业' }}
+          <el-tag :type="scope.row.status == 0 ? 'primary' : (scope.row.status == 1 ? 'danger' : 'success')">
+            {{ scope.row.status == 0 ? '正常' : (scope.row.status == 1 ? '已升班' : '毕业') }}
           </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="handleEdit(scope.row)">编辑</el-button>
+          <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
           <el-button type="success" size="mini" @click="openTeacherDialog(row)">配置教师</el-button>
+          <el-button size="mini" type="warning" @click="handleUpgrade(scope.row)"
+            :disabled="scope.row.status == 1 || scope.row.grade == 3">
+            一键升班
+          </el-button>
         </template>
       </el-table-column>
     </el-table>

@@ -1,5 +1,37 @@
 import request from '@/utils/request'
 
+// 活动模板
+export function listTemplate(query) {
+  return request({
+    url: '/system/activity/template/list',
+    method: 'get',
+    params: query
+  })
+}
+
+export function getTemplate(templateId) {
+  return request({
+    url: '/system/activity/template/' + templateId,
+    method: 'get'
+  })
+}
+
+export function addTemplate(data) {
+  return request({
+    url: '/system/activity/template',
+    method: 'post',
+    data
+  })
+}
+
+export function updateTemplate(data) {
+  return request({
+    url: '/system/activity/template',
+    method: 'put',
+    data
+  })
+}
+
 // 活动列表
 export function listActivity(query) {
   return request({
@@ -43,6 +75,15 @@ export function delActivity(activityId) {
   })
 }
 
+// 取消活动
+export function closeActivity(activityId, data) {
+  return request({
+    url: '/activity/activity/close/' + activityId,
+    method: 'put',
+    data: data
+  })
+}
+
 // 获取班级下拉
 export function classList() {
   return request({
@@ -56,7 +97,7 @@ export function classList() {
 // 新增监控
 export function addMonitor(data) {
   return request({
-    url: '/activity/monitor',
+    url: '/system/activity/monitor',
     method: 'post',
     data: data
   })
@@ -65,7 +106,7 @@ export function addMonitor(data) {
 // 监控记录列表
 export function listMonitor(query) {
   return request({
-    url: '/activity/monitor/list',
+    url: '/system/activity/monitor/list',
     method: 'get',
     params: query
   })

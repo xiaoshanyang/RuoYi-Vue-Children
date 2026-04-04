@@ -77,12 +77,22 @@ public class ActivityController extends BaseController {
         return toAjax(activityService.deleteActivityByIds(activityIds));
     }
 
+    @PreAuthorize("@ss.hasPermi('system:activityInfo:edit')")
+    @Log(title = "活动信息", businessType = BusinessType.UPDATE)
+    @PutMapping("/close/{activityId}")
+    public AjaxResult close(@PathVariable Long activityId, @RequestBody Activity activity) {
+        activity.setActivityId(activityId);
+        activity.setIsClosed(1);
+        // 自动存入取消原因 + 取消时间
+        return toAjax(activityService.updateActivity(activity));
+    }
+
     // 下拉班级列表
     @PreAuthorize("@ss.hasPermi('system:classInfo:list')")
     @GetMapping("/classList")
     public AjaxResult classList() {
         ClassInfo info = new ClassInfo();
-        info.setStatus("0");
+        info.setStatus(0);
         return success(classInfoService.selectClassInfoList(info));
     }
 }

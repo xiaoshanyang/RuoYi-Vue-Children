@@ -7,4 +7,5 @@ import java.util.List;
 public interface IClassTeacherService {
     List<ClassTeacher> getTeachersByClassId(Long classId);
     void saveClassTeachers(Long classId, List<Long> userIds, Long leaderUserId);
+    ClassTeacher getMyClass(Long classId);
 }

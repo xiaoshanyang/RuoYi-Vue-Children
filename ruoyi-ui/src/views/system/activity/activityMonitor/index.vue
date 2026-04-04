@@ -104,6 +104,7 @@ export default {
     async submit() {
       await this.$refs.formRef.validate()
       this.form.activityId = this.activityId
+      this.form.monitorTime = new Date(this.form.monitorTime)
       await addMonitor(this.form)
       this.$message.success('监控记录保存成功')
       this.$router.go(-1)

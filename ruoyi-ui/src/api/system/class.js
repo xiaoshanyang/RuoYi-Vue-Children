@@ -76,3 +76,11 @@ export function teacherList() {
     method: 'get'
   })
 }
+
+// 获取班级
+export function getMyClass(){
+  return request({
+    url: '/system/activity/classInfo/getMyClass',
+    method: 'get'
+  })
+}

@@ -29,4 +29,9 @@ public interface ClassTeacherMapper {
     // 设置某人为主班
     int setLeader(@Param("classId") Long classId,
                   @Param("userId") Long userId);
+
+    /**
+     * 根据当前登录用户ID 查询他的班级
+     */
+    ClassTeacher selectClassByUserId(Long userId);
 }

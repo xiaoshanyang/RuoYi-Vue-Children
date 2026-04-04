@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.domain.ClassInfo;
+import com.ruoyi.system.domain.ClassTeacher;
 import com.ruoyi.system.service.IClassTeacherService;
 import com.ruoyi.system.service.ISysUserService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -107,6 +109,14 @@ public class ClassInfoController extends BaseController
     @GetMapping("/teachers/{classId}")
     public AjaxResult teachers(@PathVariable Long classId) {
         return success(classTeacherService.getTeachersByClassId(classId));
+    }
+
+    @PreAuthorize("@ss.hasPermi('system:classInfo:query')")
+    @GetMapping("/getMyClass")
+    public AjaxResult getMyClass() {
+        Long userId = SecurityUtils.getUserId(); // 获取当前登录人ID
+        ClassTeacher ct = classTeacherService.getMyClass(userId);
+        return success(ct);
     }
 
     // 保存班级教师（含班主任）

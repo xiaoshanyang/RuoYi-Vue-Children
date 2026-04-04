@@ -5,15 +5,21 @@
     <resultMap type="com.ruoyi.system.domain.Activity" id="ActivityResult">
         <result property="activityId" column="activity_id" />
         <result property="classId"    column="class_id"    />
+        <result property="templateId"    column="template_id"    />
         <result property="classCode"    column="class_code"    />
         <result property="gradeName"    column="grade_name"    />
         <result property="classFullName"    column="class_full_name"    />
         <result property="activityName"    column="activity_name"    />
-        <result property="activityTime"    column="activity_time" />
+        <result property="beginTime"    column="begin_time" />
+        <result property="endTime"    column="end_time" />
+
         <result property="place"    column="place" />
         <result property="chargeBy"    column="charge_by" />
         <result property="content"    column="content" />
         <result property="remark"    column="remark" />
+        <result property="isClosed"    column="is_closed" />
+        <result property="cancelReason"    column="cancel_reason" />
+        <result property="cancelTime"    column="cancel_time" />
 
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
@@ -23,7 +29,8 @@
 
     <select id="selectActivityList" parameterType="Activity" resultMap="ActivityResult">
         select activity_id, class_id, class_code, grade_name, class_full_name,
-        activity_name, activity_time, place, charge_by, content, remark
+        activity_name, begin_time, end_time, place, charge_by, content, remark,
+        is_closed, cancel_reason, cancel_time, template_id, create_time
         from activity
         <where>
             <if test="activityName != null and activityName != ''">
@@ -33,7 +40,7 @@
                 and class_id = #{classId}
             </if>
         </where>
-        order by activity_time desc
+        order by begin_time desc
     </select>
 
     <select id="selectActivityById" parameterType="Long" resultMap="ActivityResult">
@@ -41,21 +48,25 @@
     </select>
 
     <insert id="insertActivity" parameterType="Activity">
-        insert into activity(class_id, class_code, grade_name, class_full_name,
-                             activity_name, activity_time, place, charge_by, content, remark)
-        values(#{classId}, #{classCode}, #{gradeName}, #{classFullName},
-               #{activityName}, #{activityTime}, #{place}, #{chargeBy}, #{content}, #{remark})
+        insert into activity(class_id, class_code, grade_name, class_full_name, template_id,
+                             activity_name, begin_time, end_time, place, charge_by, content, remark)
+        values(#{classId}, #{classCode}, #{gradeName}, #{classFullName}, #{templateId},
+               #{activityName}, #{beginTime}, #{endTime}, #{place}, #{chargeBy}, #{content}, #{remark})
     </insert>
 
     <update id="updateActivity" parameterType="Activity">
         update activity
         <set>
             <if test="activityName != null">activity_name = #{activityName},</if>
-            <if test="activityTime != null">activity_time = #{activityTime},</if>
+            <if test="beginTime != null">begin_time = #{beginTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
             <if test="place != null">place = #{place},</if>
             <if test="chargeBy != null">charge_by = #{chargeBy},</if>
             <if test="content != null">content = #{content},</if>
             <if test="remark != null">remark = #{remark}</if>
+            <if test="isClosed != null">is_closed = #{isClosed}</if>
+            <if test="cancelReason != null">cancel_reason = #{cancelReason}</if>
+            <if test="cancelTime != null">cancel_time = #{cancelTime}</if>
         </set>
         where activity_id = #{activityId}
     </update>

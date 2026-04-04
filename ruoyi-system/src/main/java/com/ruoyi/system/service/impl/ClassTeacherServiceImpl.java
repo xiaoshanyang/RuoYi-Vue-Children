@@ -26,6 +26,11 @@ public class ClassTeacherServiceImpl implements IClassTeacherService {
     }
 
     @Override
+    public ClassTeacher getMyClass(Long userId) {
+        return classTeacherMapper.selectClassByUserId(userId);
+    }
+
+    @Override
     @Transactional
     public void saveClassTeachers(Long classId, List<Long> userIds, Long leaderUserId) {
         // 1. 本班原有老师全部标记为调离
