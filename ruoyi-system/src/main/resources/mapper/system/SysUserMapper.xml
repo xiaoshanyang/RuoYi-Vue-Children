@@ -233,4 +233,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		WHERE r.role_key = #{roleKey}
 		  AND u.del_flag = '0'
 	</select>
+
+	<select id="selectUnbindedTeachers" parameterType="Long" resultMap="SysUserResult">
+		select u.user_id, u.user_name, u.nick_name
+		from sys_user u
+				 -- 只查教师角色
+				 inner join sys_user_role ur on u.user_id = ur.user_id
+				 inner join sys_role r on ur.role_id = r.role_id
+		where r.role_key = 'teacher'
+		  -- 关键：排除所有已经绑定过班级的教师
+		  and u.user_id not in (
+			select distinct user_id from class_teacher where class_id != #{classId}
+		)
+		  and u.del_flag = '0'
+		group by u.user_id
+	</select>
 </mapper> 

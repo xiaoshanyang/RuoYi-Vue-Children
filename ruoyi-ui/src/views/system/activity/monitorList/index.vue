@@ -17,7 +17,7 @@
 
     <el-table :data="list" border>
       <el-table-column label="活动名称" prop="activityName" />
-      <el-table-column label="班级" prop="classFullName" />
+      <el-table-column label="班级" prop="className" />
       <el-table-column label="秩序">
         <template slot-scope="scope">
           {{ scope.row.orderStatus === 0 ? '良好' : 
@@ -42,8 +42,12 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="登记时间" prop="monitorTime" width="180" />
-      <el-table-column label="登记人" prop="monitorBy" />
+      <el-table-column label="登记时间" prop="monitorTime" width="180">
+        <template  slot-scope="scope">
+          {{ parseTime(scope.row.monitorTime)}}
+        </template>
+      </el-table-column>
+      <el-table-column label="登记人" prop="monitorName" />
     </el-table>
 
     <el-pagination

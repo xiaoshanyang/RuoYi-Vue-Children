@@ -77,6 +77,14 @@ export function teacherList() {
   })
 }
 
+// 获取未分班的教师列表
+export function unbindedTeacherList(classId){
+  return request({
+    url: '/system/activity/classInfo/unbindedTeachers/'+classId,
+    method: 'get'
+  })
+}
+
 // 获取班级
 export function getMyClass(){
   return request({

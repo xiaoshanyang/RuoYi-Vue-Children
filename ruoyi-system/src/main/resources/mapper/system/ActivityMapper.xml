@@ -15,6 +15,7 @@
 
         <result property="place"    column="place" />
         <result property="chargeBy"    column="charge_by" />
+        <result property="chargeName"    column="nick_name" />
         <result property="content"    column="content" />
         <result property="remark"    column="remark" />
         <result property="isClosed"    column="is_closed" />
@@ -28,10 +29,9 @@
     </resultMap>
 
     <select id="selectActivityList" parameterType="Activity" resultMap="ActivityResult">
-        select activity_id, class_id, class_code, grade_name, class_full_name,
-        activity_name, begin_time, end_time, place, charge_by, content, remark,
-        is_closed, cancel_reason, cancel_time, template_id, create_time
+        select activity.*, sys_user.nick_name
         from activity
+        left join sys_user on activity.charge_by = sys_user.user_id
         <where>
             <if test="activityName != null and activityName != ''">
                 and activity_name like concat('%', #{activityName}, '%')
@@ -44,7 +44,10 @@
     </select>
 
     <select id="selectActivityById" parameterType="Long" resultMap="ActivityResult">
-        select * from activity where activity_id = #{activityId}
+        select activity.*
+        from activity
+        left join sys_user on activity.charge_by = sys_user.user_id
+        where activity_id = #{activityId}
     </select>
 
     <insert id="insertActivity" parameterType="Activity">

@@ -48,6 +48,8 @@ public interface ISysUserService
      */
     List<SysUser> selectUserByRoleKey(String roleKey);
 
+    List<SysUser> getUnbindedTeachers(Long classId);
+
     /**
      * 通过用户ID查询用户
      * 

@@ -51,7 +51,7 @@
         </template>
       </el-table-column>
       <el-table-column label="地点" prop="place" />
-      <el-table-column label="负责人" prop="chargeBy"  width="120"/>
+      <el-table-column label="负责人" prop="chargeName"  width="120"/>
       <el-table-column label="操作">
          <template slot-scope="scope">
           <el-button
@@ -336,6 +336,8 @@ export default {
       this.form.classCode = cls.classCode;
       this.form.gradeName = cls.grade === 1 ? "小班" : cls.grade === 2 ? "中班" : "大班";
       this.form.classFullName = cls.className;
+      this.form.beginTime = new Date(this.form.beginTime)
+      this.form.endTime = new Date(this.form.endTime)
 
       this.form.activityId
         ? await updateActivity(this.form)

@@ -4,28 +4,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.ActivityMonitorMapper">
     
-    <resultMap type="com.ruoyi.system.domain.vo.SysActivityMonitorVo" id="ActivityMonitorResult">
-        <result property="id"    column="id"    />
+    <resultMap type="com.ruoyi.system.domain.ActivityMonitor" id="ActivityMonitorResult">
+        <result property="monitorId"    column="monitor_id"    />
         <result property="activityId"    column="activity_id"    />
-        <result property="startTime"    column="start_time"    />
-        <result property="endTime"    column="end_time"    />
-        <result property="remindTime"    column="remind_time"    />
-        <result property="remark"    column="remark"    />
-        <result property="createTime"    column="create_time"    />
+        <result property="monitorTime"    column="monitor_time"    />
+        <result property="monitorStatus"    column="monitor_status"    />
+        <result property="orderStatus"    column="order_status"    />
+        <result property="safeHidden"    column="safe_hidden"    />
+        <result property="childEmotion"    column="child_emotion"    />
+        <result property="monitorBy"    column="monitor_by"    />
+        <result property="monitorName"    column="monitor_name"    />
+
 
         <result property="activityName"    column="activity_name"    />
         <result property="activityType"    column="activity_type"    />
         <result property="className"    column="class_name"    />
         <result property="activityPlace"    column="activity_place"    />
-        <result property="presetDuration"    column="preset_duration"    />
-        <result property="actualDuration"    column="actual_duration"    />
-        <result property="activityStatus"    column="activity_status"    />
     </resultMap>
 
     <select id="selectMonitorList" resultMap="ActivityMonitorResult">
-        SELECT m.*, a.activity_name, a.class_full_name, a.grade_name
+        SELECT m.*, a.activity_name, a.class_full_name, a.grade_name, class_info.class_name, sys_user.nick_name as monitor_name
         FROM activity_monitor m
-                 LEFT JOIN activity a ON m.activity_id = a.activity_id
+        LEFT JOIN activity a ON m.activity_id = a.activity_id
+        Left Join class_info on a.class_id = class_info.class_id
+        left join sys_user on m.monitor_by = sys_user.user_id
         ORDER BY m.monitor_id DESC
     </select>
 

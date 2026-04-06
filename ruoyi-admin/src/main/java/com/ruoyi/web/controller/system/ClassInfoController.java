@@ -5,8 +5,10 @@ import java.util.Map;
 
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.domain.Activity;
 import com.ruoyi.system.domain.ClassInfo;
 import com.ruoyi.system.domain.ClassTeacher;
+import com.ruoyi.system.service.IActivityService;
 import com.ruoyi.system.service.IClassTeacherService;
 import com.ruoyi.system.service.ISysUserService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,6 +46,9 @@ public class ClassInfoController extends BaseController
 
     @Autowired
     private IClassTeacherService classTeacherService;
+
+    @Autowired
+    private IActivityService activityService;
 
     /**
      * 查询班级信息（按届命名）列表
@@ -85,14 +90,27 @@ public class ClassInfoController extends BaseController
         return toAjax(classInfoService.updateClassInfo(classInfo));
     }
 
-    /**
-     * 删除班级信息（按届命名）
-     */
     @PreAuthorize("@ss.hasPermi('system:classInfo:remove')")
     @Log(title = "班级信息（按届命名）", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] classIds) {
-        return toAjax(classInfoService.deleteClassInfoByIds(classIds));
+    @DeleteMapping("/{classId}")
+    public AjaxResult remove(@PathVariable Long classId) {
+
+        ClassInfo c = classInfoService.selectClassInfoById(classId);
+        if (c == null) {
+            return AjaxResult.error("班级不存在");
+        }
+        if (c.getStatus() != 0) {
+            return AjaxResult.error("不能删除已升班/已毕业的历史班级");
+        }
+        // 同时可以判断该班级是否还有活动，有则不给删
+        Activity activity = new Activity();
+        activity.setClassId(c.getClassId());
+        List<Activity> acts = activityService.selectActivityList(activity);
+        if (!acts.isEmpty()) {
+            return AjaxResult.error("该班级存在活动记录，不允许删除");
+        }
+
+        return toAjax(classInfoService.deleteClassInfoById(classId));
     }
 
     // 一键升班接口
@@ -104,8 +122,7 @@ public class ClassInfoController extends BaseController
     }
 
     // 获取班级教师
-    @PreAuthorize("@ss.hasPermi('system:classInfo:edit')")
-    @Log(title = "班级信息（按届命名）", businessType = BusinessType.UPDATE)
+    @PreAuthorize("@ss.hasPermi('system:classInfo:query')")
     @GetMapping("/teachers/{classId}")
     public AjaxResult teachers(@PathVariable Long classId) {
         return success(classTeacherService.getTeachersByClassId(classId));
@@ -125,7 +142,7 @@ public class ClassInfoController extends BaseController
     @PostMapping("/saveTeachers")
     public AjaxResult saveTeachers(@RequestBody Map<String, Object> params) {
         Long classId = Long.valueOf(params.get("classId").toString());
-        List<Long> userIds = (List<Long>) params.get("userIds");
+        List<Long> userIds = ((List<?>) params.get("userIds")).stream().map(v -> ((Number) v).longValue()).collect(java.util.stream.Collectors.toList());
         Long leaderUserId = params.get("leaderUserId") != null
                 ? Long.valueOf(params.get("leaderUserId").toString())
                 : null;
@@ -134,10 +151,17 @@ public class ClassInfoController extends BaseController
         return success();
     }
 
+    @PreAuthorize("@ss.hasPermi('system:classInfo:query')")
     // 获取教师下拉（角色：teacher）
     @GetMapping("/teacherList")
     public AjaxResult teacherList() {
         List<SysUser> list = sysUserService.selectUserByRoleKey("teacher");
         return success(list);
+    }
+
+    @PreAuthorize("@ss.hasPermi('system:classInfo:query')")
+    @GetMapping("/unbindedTeachers/{classId}")
+    public AjaxResult unbindedTeachers(@PathVariable Long classId) {
+        return AjaxResult.success(sysUserService.getUnbindedTeachers(classId));
     }
 }

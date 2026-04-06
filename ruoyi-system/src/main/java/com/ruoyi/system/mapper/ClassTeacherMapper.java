@@ -34,4 +34,6 @@ public interface ClassTeacherMapper {
      * 根据当前登录用户ID 查询他的班级
      */
     ClassTeacher selectClassByUserId(Long userId);
+
+    int deleteByClassId(Long classId);
 }

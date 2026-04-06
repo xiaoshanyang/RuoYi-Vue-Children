@@ -7,9 +7,9 @@
     <resultMap type="com.ruoyi.system.domain.ClassTeacher" id="ClassTeacherResult">
         <result property="classId"    column="class_id"    />
         <result property="userId"    column="user_id"    />
-        <result property="userName"    column="user_name"    />
+        <result property="userName"    column="nick_name"    />
         <result property="isLeader"    column="is_leader"    />
-        <result property="entryYear"    column="entry_year"    />
+        <result property="status"    column="status"    />
         <result property="remark"    column="remark" />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
@@ -17,15 +17,19 @@
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
-    <select id="selectByClassId" resultType="ClassTeacher">
-        SELECT * FROM class_teacher
+    <select id="selectByClassId" resultMap="ClassTeacherResult">
+        SELECT class_teacher.*, sys_user.nick_name
+        FROM class_teacher
+        left join sys_user on class_teacher.user_id = sys_user.user_id
         WHERE class_id = #{classId}
-        ORDER BY is_leader DESC, id ASC
+        ORDER BY is_leader DESC, class_id ASC
     </select>
 
-    <select id="selectByClassAndUser" resultType="ClassTeacher">
-        SELECT * FROM class_teacher
-        WHERE class_id = #{classId} AND user_id = #{userId}
+    <select id="selectByClassAndUser" resultMap="ClassTeacherResult">
+        SELECT class_teacher.*, sys_user.nick_name
+        FROM class_teacher
+        left join sys_user on class_teacher.user_id = sys_user.user_id
+        WHERE class_id = #{classId} AND class_teacher.user_id = #{userId}
     </select>
 
     <insert id="insertClassTeacher">
@@ -55,12 +59,19 @@
         WHERE class_id = #{classId} AND user_id = #{userId}
     </update>
 
-    <select id="selectClassByUserId" resultType="ClassTeacher">
-        SELECT * FROM class_teacher
-        WHERE user_id = #{userId} AND status = '0'
+    <select id="selectClassByUserId" resultMap="ClassTeacherResult">
+        SELECT class_teacher.*, sys_user.nick_name
+        FROM class_teacher
+        left join sys_user on class_teacher.user_id = sys_user.user_id
+        WHERE class_teacher.user_id = #{userId} AND class_teacher.status = '0'
             LIMIT 1
     </select>
 
+    <delete id="deleteByClassId">
+        DELETE
+        FROM class_teacher
+        WHERE class_id = #{classId}
+    </delete>
 </mapper>
 
 

@@ -24,6 +24,7 @@ public class Activity extends BaseEntity {
 
     private String place;
     private String chargeBy;
+    private String chargeName;
     private String content;
     private String remark;
 

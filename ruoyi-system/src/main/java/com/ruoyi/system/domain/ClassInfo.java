@@ -11,8 +11,11 @@ public class ClassInfo extends BaseEntity {
     private String classCode;
     private String className;
     private Integer grade;
-    private Integer enterYear;
+    private Integer entryYear;
     private String schoolYear;
     private Integer status;
     private String remark;
+
+    private String teacherName;
+    private Long teacherId;
 }

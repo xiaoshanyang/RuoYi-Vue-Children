@@ -1,7 +1,11 @@
 package com.ruoyi.system.service.impl;
 
+import java.util.Date;
 import java.util.List;
+
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.system.domain.Activity;
 import com.ruoyi.system.domain.ClassInfo;
 import com.ruoyi.system.domain.ClassTeacher;
 import com.ruoyi.system.mapper.ClassInfoMapper;
@@ -46,9 +50,14 @@ public class ClassInfoServiceImpl implements IClassInfoService {
         return classInfoMapper.updateClassInfo(classInfo);
     }
 
+    @Transactional
     @Override
     public int deleteClassInfoById(Long classId) {
-        return classInfoMapper.deleteClassInfoById(classId);
+
+        // 开始删除
+        int row = classInfoMapper.deleteClassInfoById(classId);
+        int row1 = classTeacherMapper.deleteByClassId(classId);
+        return row1 > 0 ? row1 : row;
     }
 
     @Transactional
@@ -88,9 +97,15 @@ public class ClassInfoServiceImpl implements IClassInfoService {
 
         // 3. 生成新班级（年级+1）
         ClassInfo newClass = new ClassInfo();
+        newClass.setClassCode(oldClass.getClassCode());
         newClass.setClassName(oldClass.getClassName());
         newClass.setGrade(oldClass.getGrade() + 1);
-        newClass.setSchoolYear("2026-2027"); // 可动态获取
+        newClass.setEntryYear(oldClass.getEntryYear());
+        newClass.setCreateTime(DateUtils.getNowDate());
+        newClass.setRemark(oldClass.getRemark());
+
+        int currentYear = java.time.LocalDate.now().getYear();
+        newClass.setSchoolYear(currentYear + "-" + (currentYear + 1));
         newClass.setStatus(0);
         classInfoMapper.insertClassInfo(newClass);
 

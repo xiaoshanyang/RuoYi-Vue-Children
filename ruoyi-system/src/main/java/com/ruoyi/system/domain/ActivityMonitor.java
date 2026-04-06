@@ -25,5 +25,9 @@ public class ActivityMonitor extends BaseEntity {
     private String handleMethod;    // 处理措施
     private String handleResult;    // 处理结果
 
+    private String activityName;
+    private String className;
+
     private String monitorBy;       // 监控人
+    private String monitorName;
 }

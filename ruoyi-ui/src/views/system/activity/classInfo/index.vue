@@ -18,10 +18,10 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col>
+      <el-col :span="1.5">
         <el-button type="success" icon="el-icon-plus" @click="handleAdd">新增</el-button>
       </el-col>
-      <el-col>
+      <el-col :span="1.5">
         <el-button type="warning" @click="handleUpgrade">一键升班</el-button>
       </el-col>
     </el-row>
@@ -36,10 +36,10 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="学年" prop="schoolYear" />
-      <el-table-column label="入园年份" prop="entryYear"/>
-      <el-table-column label="班主任" prop="teacher"/>
-      <el-table-column label="状态">
+      <el-table-column label="学年" prop="schoolYear" width="150"/>
+      <el-table-column label="入园年份" prop="entryYear" width="150"/>
+      <el-table-column label="班主任" prop="teacherName" width="120"/>
+      <el-table-column label="状态" width="120">
         <template slot-scope="scope">
           <el-tag :type="scope.row.status == 0 ? 'primary' : (scope.row.status == 1 ? 'danger' : 'success')">
             {{ scope.row.status == 0 ? '正常' : (scope.row.status == 1 ? '已升班' : '毕业') }}
@@ -48,11 +48,16 @@
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
-          <el-button type="success" size="mini" @click="openTeacherDialog(row)">配置教师</el-button>
+          <el-button size="mini" @click="handleEdit(scope.row)" :disabled="scope.row.status == 1 || scope.row.grade == 3">编辑</el-button>
+          <el-button type="success" size="mini" @click="openTeacherDialog(scope.row)" :disabled="scope.row.status == 1 || scope.row.grade == 3">配置教师</el-button>
           <el-button size="mini" type="warning" @click="handleUpgrade(scope.row)"
             :disabled="scope.row.status == 1 || scope.row.grade == 3">
             一键升班
+          </el-button>
+          <!-- 只有正常才能删除 -->
+          <el-button size="mini" type="danger" @click="handleDelete(scope.row)"
+            :disabled="scope.row.status != 0">
+            删除
           </el-button>
         </template>
       </el-table-column>
@@ -87,6 +92,9 @@
         <el-form-item label="入园年份" prop="entryYear">
           <el-input v-model.number="form.entryYear"/>
         </el-form-item>
+        <el-form-item label="学年" prop="schoolYear">
+          <el-input v-model="form.schoolYear" placeholder="例如 2025-2026"/>
+        </el-form-item>
         <el-form-item label="班主任">
           <el-input v-model="form.teacher"/>
         </el-form-item>
@@ -111,7 +119,7 @@
             <el-option
               v-for="user in teacherOptions"
               :key="user.userId"
-              :label="user.userName"
+              :label="user.nickName"
               :value="user.userId"
             />
           </el-select>
@@ -143,7 +151,7 @@
 </template>
 
 <script>
-import { listClassInfo, getClassInfo, addClassInfo, updateClassInfo, upgradeGrade, teacherList, getClassTeachers, saveClassTeachers } from "@/api/system/class";
+import { listClassInfo, getClassInfo, addClassInfo, updateClassInfo, upgradeGrade, teacherList, getClassTeachers, saveClassTeachers, delClassInfo, unbindedTeacherList } from "@/api/system/class";
 
 export default {
   name: "ClassInfo",
@@ -191,6 +199,11 @@ export default {
       this.form = res.data;
       this.open = true;
     },
+    async handleDelete(row) {
+      await delClassInfo(row.classId);
+      this.$message.success("删除成功");
+      this.getList();
+    },
     async submit() {
       await this.$refs.formRef.validate();
       this.form.classId ? await updateClassInfo(this.form) : await addClassInfo(this.form);
@@ -208,12 +221,12 @@ export default {
       this.currentClassId = row.classId;
       this.teacherDialogVisible = true;
       await this.loadTeacherOptions();
-      await this.loadClassTeacherSelected();
+      await this.loadClassTeacherSelected(); 
     },
 
     // 加载系统教师列表
     async loadTeacherOptions() {
-      const res = await teacherList();
+      const res = await unbindedTeacherList(this.currentClassId);
       this.teacherOptions = res.data;
     },
 
@@ -230,7 +243,7 @@ export default {
     // 根据ID获取教师姓名
     getTeacherName(userId) {
       let user = this.teacherOptions.find(u => u.userId === userId);
-      return user ? user.userName : "";
+      return user ? user.nickName : "";
     },
 
     // 提交保存
@@ -246,6 +259,9 @@ export default {
       });
       this.$message.success("保存成功");
       this.teacherDialogVisible = false;
+
+      this.getList()
+
     }
   }
 };

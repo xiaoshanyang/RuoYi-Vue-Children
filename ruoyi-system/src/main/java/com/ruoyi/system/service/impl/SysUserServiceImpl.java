@@ -110,6 +110,11 @@ public class SysUserServiceImpl implements ISysUserService
         return userMapper.selectUserByRoleKey(roleKey);
     }
 
+    @Override
+    public List<SysUser> getUnbindedTeachers(Long classId) {
+        return userMapper.selectUnbindedTeachers(classId);
+    }
+
     /**
      * 通过用户名查询用户
      * 

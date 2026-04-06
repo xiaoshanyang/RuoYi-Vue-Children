@@ -38,6 +38,8 @@ public interface SysUserMapper
 
     List<SysUser> selectUserByRoleKey(String roleKey);
 
+    List<SysUser> selectUnbindedTeachers(Long classId);
+
     /**
      * 通过用户名查询用户
      * 

@@ -10,7 +10,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="className"    column="class_name"    />
         <result property="grade"    column="grade"    />
         <result property="entryYear"    column="entry_year"    />
-        <result property="teacher"    column="teacher"    />
+        <result property="schoolYear"    column="school_year"    />
+        <result property="teacherName"    column="nick_name"    />
+        <result property="teacherId"    column="user_id"    />
         <result property="status"    column="status"    />
         <result property="remark"    column="remark" />
         <result property="createBy"    column="create_by"    />
@@ -20,12 +22,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <select id="selectClassInfoList" parameterType="ClassInfo" resultMap="ClassInfoResult">
-        select class_id, class_code, class_name, grade, entry_year, teacher, status, create_time, remark
+        select class_info.class_id, class_info.class_code, class_info.class_name, class_info.grade, class_info.entry_year, class_info.school_year, class_info.status, class_info.create_time, class_info.remark,
+                class_teacher.user_id, sys_user.nick_name
         from class_info
+        left join class_teacher on class_info.class_id = class_teacher.class_id and class_teacher.is_leader = '1' and class_teacher.status = '0'
+        left join sys_user on class_teacher.user_id = sys_user.user_id
         <where>
             <if test="className != null and className != ''">and class_name like concat('%', #{className}, '%')</if>
             <if test="grade != null">and grade = #{grade}</if>
-            <if test="status != null and status != ''">and status = #{status}</if>
+            <if test="status != null and status != ''">and class_teacher.status = #{status}</if>
         </where>
         order by entry_year desc, grade asc
     </select>
@@ -35,8 +40,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <insert id="insertClassInfo" parameterType="ClassInfo">
-        insert into class_info(class_code, class_name, grade, entry_year, teacher, status, remark, create_time)
-        values(#{classCode}, #{className}, #{grade}, #{entryYear}, #{teacher}, #{status}, #{remark}, sysdate())
+        insert into class_info(class_code, class_name, grade, entry_year, school_year, status, remark, create_time)
+        values(#{classCode}, #{className}, #{grade}, #{entryYear}, #{schoolYear}, #{status}, #{remark}, sysdate())
     </insert>
 
     <update id="updateClassInfo" parameterType="ClassInfo">
@@ -46,7 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="className != null">class_name = #{className},</if>
             <if test="grade != null">grade = #{grade},</if>
             <if test="entryYear != null">entry_year = #{entryYear},</if>
-            <if test="teacher != null">teacher = #{teacher},</if>
+            <if test="schoolYear != null">school_year = #{schoolYear},</if>
             <if test="status != null">status = #{status},</if>
             <if test="remark != null">remark = #{remark}</if>
         </set>
